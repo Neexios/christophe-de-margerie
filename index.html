@@ -24,7 +24,7 @@
             --typewriter: 'Special Elite', 'Courier New', monospace;
         }
 
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; scroll-snap-type: y proximity; }
 
         body {
             background: var(--bg);
@@ -377,6 +377,7 @@
             display: flex;
             align-items: center;
             padding: 100px 60px 120px;
+            scroll-snap-align: start;
         }
 
         .scene-inner {
@@ -385,6 +386,11 @@
             margin: 0 auto;
             opacity: 0;
             transform: translateY(50px);
+            visibility: hidden;
+        }
+
+        .scene-inner.revealed {
+            visibility: visible;
         }
 
         /* Evidence tag */
@@ -1797,21 +1803,30 @@ function initScrollAnims() {
         const inner = scene.querySelector('.scene-inner');
         const sceneNum = scene.dataset.scene;
 
+        // Helper: reveal visibility when entering, hide when leaving back
+        function onReveal() { inner.classList.add('revealed'); }
+        function onHide() { inner.classList.remove('revealed'); }
+
+        const START = 'top 55%';  // trigger later — scene must be well in view
+        const TOGGLE = 'play none none reverse';
+
         // --- SCENE-SPECIFIC ENTRY TRANSITIONS ---
         if (sceneNum === '1') {
             // Scene 1: Typewriter reveal — clip-path wipe left to right
             gsap.set(inner, { opacity: 1, y: 0, clipPath: 'inset(0 100% 0 0)' });
             gsap.to(inner, {
                 clipPath: 'inset(0 0% 0 0)', duration: 2.2, ease: 'steps(40)',
-                scrollTrigger: { trigger: scene, start: 'top 72%', end: 'top 30%', toggleActions: 'play none none reverse' }
+                scrollTrigger: { trigger: scene, start: START, toggleActions: TOGGLE,
+                    onEnter: onReveal, onLeaveBack: onHide }
             });
 
         } else if (sceneNum === '2') {
-            // Scene 2: Documents dropped on table — dossier-items have enhanced animation below
+            // Scene 2: Documents dropped on table
             gsap.set(inner, { opacity: 0, y: 20 });
             gsap.to(inner, {
                 opacity: 1, y: 0, duration: 0.6, ease: 'power2.out',
-                scrollTrigger: { trigger: scene, start: 'top 72%', end: 'top 30%', toggleActions: 'play none none reverse' }
+                scrollTrigger: { trigger: scene, start: START, toggleActions: TOGGLE,
+                    onEnter: onReveal, onLeaveBack: onHide }
             });
 
         } else if (sceneNum === '3') {
@@ -1828,14 +1843,15 @@ function initScrollAnims() {
             gsap.set(curtain, { scaleY: 0, transformOrigin: 'top center', opacity: 1 });
 
             const tl3 = gsap.timeline({
-                scrollTrigger: { trigger: scene, start: 'top 72%', toggleActions: 'play none none reverse' }
+                scrollTrigger: { trigger: scene, start: START, toggleActions: TOGGLE,
+                    onEnter: onReveal, onLeaveBack: onHide }
             });
             tl3.to(curtain, { scaleY: 1, duration: 0.7, ease: 'power2.in' })
                .to(inner, { opacity: 1, duration: 0.5, ease: 'power1.out' }, 0.5)
                .to(curtain, { opacity: 0, duration: 1, ease: 'power2.out' }, 0.8);
 
         } else if (sceneNum === '4') {
-            // Scene 4: Flash/Explosion + Camera Shake — most dramatic
+            // Scene 4: Flash/Explosion + Camera Shake
             let flash = scene.querySelector('.flash-overlay');
             if (!flash) {
                 flash = document.createElement('div');
@@ -1847,7 +1863,8 @@ function initScrollAnims() {
             gsap.set(inner, { opacity: 0, y: 0 });
 
             const tl4 = gsap.timeline({
-                scrollTrigger: { trigger: scene, start: 'top 72%', toggleActions: 'play none none reverse' }
+                scrollTrigger: { trigger: scene, start: START, toggleActions: TOGGLE,
+                    onEnter: onReveal, onLeaveBack: onHide }
             });
             tl4.to(flash, { opacity: 1, duration: 0.08, ease: 'power4.in' })
                .to(flash, { opacity: 0, duration: 0.5, ease: 'power2.out' }, 0.08)
@@ -1856,26 +1873,29 @@ function initScrollAnims() {
                .add(() => { inner.classList.remove('shake-active'); }, 0.62);
 
         } else if (sceneNum === '5') {
-            // Scene 5: Cork board — pin-cards get enhanced "pin-thud" animation below
+            // Scene 5: Cork board pinning
             gsap.set(inner, { opacity: 0, y: 0 });
             gsap.to(inner, {
                 opacity: 1, y: 0, duration: 0.5, ease: 'power2.out',
-                scrollTrigger: { trigger: scene, start: 'top 72%', end: 'top 30%', toggleActions: 'play none none reverse' }
+                scrollTrigger: { trigger: scene, start: START, toggleActions: TOGGLE,
+                    onEnter: onReveal, onLeaveBack: onHide }
             });
 
         } else if (sceneNum === '6') {
-            // Scene 6: Page turn — rotateY perspective flip from left
+            // Scene 6: Page turn
             gsap.set(inner, { opacity: 0, rotateY: -90, transformOrigin: 'left center', y: 0 });
             gsap.to(inner, {
                 opacity: 1, rotateY: 0, duration: 1.2, ease: 'power3.out',
-                scrollTrigger: { trigger: scene, start: 'top 72%', end: 'top 30%', toggleActions: 'play none none reverse' }
+                scrollTrigger: { trigger: scene, start: START, toggleActions: TOGGLE,
+                    onEnter: onReveal, onLeaveBack: onHide }
             });
 
         } else {
-            // Fallback: default fade
+            // Fallback
             gsap.to(inner, {
                 opacity: 1, y: 0, duration: 1, ease: 'power3.out',
-                scrollTrigger: { trigger: scene, start: 'top 72%', end: 'top 30%', toggleActions: 'play none none reverse' }
+                scrollTrigger: { trigger: scene, start: START, toggleActions: TOGGLE,
+                    onEnter: onReveal, onLeaveBack: onHide }
             });
         }
 
@@ -1885,7 +1905,7 @@ function initScrollAnims() {
             gsap.fromTo(cards,
                 { opacity: 0, y: 25, scale: 0.97 },
                 { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.08, ease: 'power2.out',
-                  scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                  scrollTrigger: { trigger: scene, start: 'top 45%', toggleActions: 'play none none reverse' }
                 }
             );
         }
@@ -1899,14 +1919,14 @@ function initScrollAnims() {
                     { opacity: 0, y: -80, rotation: startRot, scale: 0.85 },
                     { opacity: 1, y: 0, rotation: startRot * 0.15, scale: 1, duration: 0.7,
                       delay: j * 0.2, ease: 'bounce.out',
-                      scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                      scrollTrigger: { trigger: scene, start: 'top 45%', toggleActions: 'play none none reverse' }
                     }
                 );
             } else {
                 gsap.fromTo(item,
                     { opacity: 0, x: j % 2 === 0 ? -30 : 30, rotation: j % 2 === 0 ? -2 : 2 },
                     { opacity: 1, x: 0, rotation: 0, duration: 0.6, delay: j * 0.12, ease: 'power2.out',
-                      scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                      scrollTrigger: { trigger: scene, start: 'top 45%', toggleActions: 'play none none reverse' }
                     }
                 );
             }
@@ -1930,14 +1950,14 @@ function initScrollAnims() {
                     { opacity: 0, y: -60, scale: 1.05 },
                     { opacity: 1, y: 0, scale: 1, duration: 0.45,
                       delay: j * 0.18, ease: 'bounce.out',
-                      scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                      scrollTrigger: { trigger: scene, start: 'top 45%', toggleActions: 'play none none reverse' }
                     }
                 );
             } else {
                 gsap.fromTo(card,
                     { opacity: 0, scale: 0.92, y: 20, rotation: -3 + Math.random() * 6 },
                     { opacity: 1, scale: 1, y: 0, rotation: 0, duration: 0.5, delay: j * 0.1, ease: 'back.out(1.4)',
-                      scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                      scrollTrigger: { trigger: scene, start: 'top 45%', toggleActions: 'play none none reverse' }
                     }
                 );
             }
@@ -1948,7 +1968,7 @@ function initScrollAnims() {
             gsap.fromTo(card,
                 { opacity: 0, y: 30 },
                 { opacity: 1, y: 0, duration: 0.5, delay: j * 0.1, ease: 'power2.out',
-                  scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                  scrollTrigger: { trigger: scene, start: 'top 45%', toggleActions: 'play none none reverse' }
                 }
             );
         });
@@ -1971,7 +1991,9 @@ function initScrollAnims() {
     const endInner = document.querySelector('#scene-end .scene-inner');
     gsap.to(endInner, {
         opacity: 1, y: 0, duration: 1, ease: 'power3.out',
-        scrollTrigger: { trigger: '#scene-end', start: 'top 70%', toggleActions: 'play none none reverse' }
+        scrollTrigger: { trigger: '#scene-end', start: 'top 55%', toggleActions: 'play none none reverse',
+            onEnter: () => endInner.classList.add('revealed'),
+            onLeaveBack: () => endInner.classList.remove('revealed') }
     });
 
     // Case closed stamp
