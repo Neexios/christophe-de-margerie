@@ -415,11 +415,14 @@
         .scene {
             position: relative;
             z-index: 2;
-            padding: 100px 60px 80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 100px 60px 120px;
         }
 
         .scene-inner {
-            max-width: 900px;
+            max-width: 1200px;
             width: 100%;
             margin: 0 auto;
             opacity: 0;
@@ -1149,7 +1152,7 @@
 
         /* === RESPONSIVE === */
         @media (max-width: 768px) {
-            .scene { padding: 60px 16px 60px; }
+            .scene { padding: 60px 20px 100px; }
             .data-grid { grid-template-columns: 1fr 1fr; }
             .pin-board { grid-template-columns: 1fr; }
             .evo-grid { grid-template-columns: 1fr; }
@@ -1165,10 +1168,8 @@
         /* === ARCHIVE PHOTOS === */
         .archive-photo {
             width: 100%;
-            max-width: 320px;
-            max-height: 180px;
-            object-fit: cover;
-            margin: 12px 0;
+            max-width: 500px;
+            margin: 20px 0;
             border: 1px solid rgba(255,255,255,0.08);
             filter: grayscale(70%) contrast(1.1) sepia(15%);
             opacity: 0.85;
@@ -1527,8 +1528,8 @@
         /* --- VNOUKOVO MINIMAP --- */
         .vnoukovo-map {
             width: 100%;
-            max-width: 420px;
-            margin: 16px auto;
+            max-width: 600px;
+            margin: 30px auto;
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: 8px;
