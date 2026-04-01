@@ -1478,12 +1478,88 @@
             transform-origin: left center;
         }
 
+        /* --- VNOUKOVO MINIMAP --- */
+        .vnoukovo-map {
+            width: 100%;
+            max-width: 600px;
+            margin: 30px auto;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+        }
+        .vnoukovo-map svg {
+            width: 100%;
+            height: auto;
+        }
+        .vnoukovo-map .map-title {
+            font-family: var(--typewriter);
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--red);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .vnoukovo-map text {
+            font-family: var(--typewriter);
+        }
+        @keyframes pulse-impact {
+            0%, 100% { r: 8; opacity: 0.9; }
+            50% { r: 14; opacity: 0.4; }
+        }
+        @keyframes pulse-snowplow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* === PRESENTATION MODE === */
+        #presentation-bar {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            z-index: 5000;
+            background: rgba(12,12,20,0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(192,57,43,0.3);
+            padding: 8px 16px;
+            font-family: var(--typewriter);
+            font-size: 11px;
+            color: var(--gray);
+            letter-spacing: 2px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            border-radius: 4px;
+        }
+        #presentation-bar .timer-bar {
+            width: 80px;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        #presentation-bar .timer-fill {
+            height: 100%;
+            background: var(--red);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
     </style>
 </head>
 <body>
 
 <!-- === SOUND TOGGLE === -->
 <button id="sound-toggle" title="Activer/Désactiver le son">🔇</button>
+
+<!-- === PRESENTATION BAR === -->
+<div id="presentation-bar">
+    <span id="pres-label">MODE PRESENTATION</span>
+    <span id="pres-scene">Scene 1/6</span>
+    <div class="timer-bar"><div class="timer-fill" id="pres-timer-fill"></div></div>
+</div>
 
 <!-- === LOADING SCREEN === -->
 <div id="loading-screen">
@@ -1700,6 +1776,99 @@
                 <div class="archive-caption">Aéroport de Vnoukovo, Moscou — Lieu du drame &bull; mos.ru / CC BY 4.0</div>
             </div>
         </div>
+
+        <!-- MINIMAP VNOUKOVO -->
+        <div class="vnoukovo-map" id="vnoukovo-map">
+            <div class="map-title">Reconstitution -- Piste 06/24, Vnoukovo</div>
+            <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg">
+                <rect width="600" height="360" fill="transparent"/>
+
+                <!-- Piste 06/24 -->
+                <g id="map-runway">
+                    <rect x="60" y="150" width="500" height="36" rx="2"
+                          fill="#1a1a2e" stroke="#3a3a4e" stroke-width="1.5"
+                          transform="rotate(-6, 310, 168)"/>
+                    <line x1="80" y1="168" x2="540" y2="168"
+                          stroke="#4a4a5e" stroke-width="1" stroke-dasharray="16,10"
+                          transform="rotate(-6, 310, 168)"/>
+                    <text x="40" y="180" fill="#6a6a7a" font-size="11"
+                          font-family="monospace" transform="rotate(-6, 310, 168)">06</text>
+                    <text x="550" y="180" fill="#6a6a7a" font-size="11"
+                          font-family="monospace" transform="rotate(-6, 310, 168)">24</text>
+                </g>
+
+                <!-- Taxiway -->
+                <g id="map-taxiway">
+                    <rect x="180" y="60" width="18" height="200" rx="2"
+                          fill="#14142a" stroke="#2a2a3e" stroke-width="1"
+                          transform="rotate(8, 189, 160)"/>
+                    <text x="145" y="55" fill="#5a5a6a" font-size="9"
+                          font-family="monospace">TAXIWAY</text>
+                </g>
+
+                <!-- Terminal VIP Vnoukovo-3 -->
+                <g id="map-terminal">
+                    <rect x="120" y="280" width="70" height="30" rx="4"
+                          fill="rgba(212,168,75,0.12)" stroke="#d4a84b" stroke-width="1"/>
+                    <text x="155" y="300" fill="#d4a84b" font-size="8"
+                          text-anchor="middle" font-weight="600"
+                          font-family="monospace">VIP</text>
+                    <text x="155" y="325" fill="#6a6a7a" font-size="8"
+                          text-anchor="middle" font-family="monospace">Vnoukovo-3</text>
+                </g>
+
+                <!-- Chasse-neige -->
+                <g id="map-snowplow" opacity="0">
+                    <circle cx="370" cy="152" r="7" fill="#c0392b" opacity="0.9"/>
+                    <rect x="364" y="148" width="12" height="8" rx="2"
+                          fill="#c0392b" opacity="0.7"/>
+                    <text x="370" y="137" fill="#e74c3c" font-size="8"
+                          text-anchor="middle" font-family="monospace">&#x2744; Chasse-neige</text>
+                </g>
+
+                <!-- Trajectoire du Falcon 50 -->
+                <path id="map-falcon-path"
+                      d="M 175,250 L 185,200 L 200,170 L 260,162 L 320,155 L 365,152"
+                      fill="none" stroke="#d4a84b" stroke-width="2"
+                      stroke-dasharray="8,5" stroke-linecap="round"
+                      opacity="0"/>
+                <g id="map-falcon-label" opacity="0">
+                    <text x="170" y="265" fill="#d4a84b" font-size="9"
+                          font-weight="600" font-family="monospace">&#x2708; Falcon 50</text>
+                </g>
+
+                <!-- Point d'impact -->
+                <g id="map-impact" opacity="0">
+                    <circle id="map-impact-pulse" cx="368" cy="152" r="8" fill="none"
+                            stroke="#c0392b" stroke-width="2.5"/>
+                    <circle cx="368" cy="152" r="3" fill="#c0392b"/>
+                    <line x1="360" y1="144" x2="376" y2="160"
+                          stroke="#e74c3c" stroke-width="2.5"/>
+                    <line x1="376" y1="144" x2="360" y2="160"
+                          stroke="#e74c3c" stroke-width="2.5"/>
+                    <text x="368" y="180" fill="#e74c3c" font-size="8"
+                          text-anchor="middle" font-weight="700"
+                          font-family="monospace">IMPACT</text>
+                </g>
+
+                <!-- Legende -->
+                <g transform="translate(420, 280)">
+                    <rect width="160" height="70" rx="4" fill="rgba(255,255,255,0.03)"
+                          stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+                    <circle cx="15" cy="18" r="4" fill="#3a3a4e"/>
+                    <text x="28" y="21" fill="#6a6a7a" font-size="8"
+                          font-family="monospace">Piste 06/24</text>
+                    <line x1="8" y1="36" x2="22" y2="36" stroke="#d4a84b"
+                          stroke-width="2" stroke-dasharray="4,3"/>
+                    <text x="28" y="39" fill="#6a6a7a" font-size="8"
+                          font-family="monospace">Trajectoire Falcon</text>
+                    <circle cx="15" cy="55" r="4" fill="#c0392b"/>
+                    <text x="28" y="58" fill="#6a6a7a" font-size="8"
+                          font-family="monospace">Point d'impact</text>
+                </g>
+            </svg>
+        </div>
+
         <div class="v-timeline">
             <div class="v-tl-item">
                 <div class="v-tl-time">20H30</div>
@@ -3352,6 +3521,293 @@ function initProgressBar() {
                 }, 'hold');
             }
         });
+    }
+    setup();
+})();
+
+// ================================================================
+// VNOUKOVO MINIMAP ANIMATION (scene 3)
+// ================================================================
+(function initVnoukovoMap() {
+    var mapEl = document.getElementById('vnoukovo-map');
+    if (!mapEl) return;
+
+    var runway = document.getElementById('map-runway');
+    var taxiway = document.getElementById('map-taxiway');
+    var terminal = document.getElementById('map-terminal');
+    var snowplow = document.getElementById('map-snowplow');
+    var falconPath = document.getElementById('map-falcon-path');
+    var falconLabel = document.getElementById('map-falcon-label');
+    var impact = document.getElementById('map-impact');
+    var impactPulse = document.getElementById('map-impact-pulse');
+
+    // Initial states
+    gsap.set([runway, taxiway, terminal], { opacity: 0 });
+    gsap.set(snowplow, { opacity: 0 });
+    gsap.set(falconPath, { opacity: 0 });
+    gsap.set(falconLabel, { opacity: 0 });
+    gsap.set(impact, { opacity: 0 });
+
+    // Prepare falcon path dash animation
+    if (falconPath) {
+        var pathLen = falconPath.getTotalLength ? falconPath.getTotalLength() : 300;
+        falconPath.style.strokeDasharray = pathLen;
+        falconPath.style.strokeDashoffset = pathLen;
+    }
+
+    function setup() {
+        if (typeof started !== 'undefined' && !started) { setTimeout(setup, 300); return; }
+
+        ScrollTrigger.create({
+            trigger: '#scene-3',
+            start: 'top 70%',
+            once: true,
+            onEnter: function() {
+                var tl = gsap.timeline();
+
+                // 1. Runway, taxiway, terminal fade in
+                tl.to([runway, taxiway, terminal], {
+                    opacity: 1,
+                    duration: 0.8,
+                    ease: 'power2.out',
+                    stagger: 0.15
+                });
+
+                // 2. Snowplow appears with pulse
+                tl.to(snowplow, {
+                    opacity: 1,
+                    duration: 0.5,
+                    ease: 'power2.out'
+                }, '+=0.2');
+
+                // 3. Falcon trajectory draws in
+                tl.to(falconPath, {
+                    opacity: 1,
+                    duration: 0.1
+                }, '+=0.3');
+                tl.to(falconPath, {
+                    strokeDashoffset: 0,
+                    duration: 1.5,
+                    ease: 'power1.inOut'
+                });
+                tl.to(falconLabel, {
+                    opacity: 1,
+                    duration: 0.4
+                }, '-=1.2');
+
+                // 4. Impact explodes
+                tl.to(impact, {
+                    opacity: 1,
+                    duration: 0.3,
+                    ease: 'power3.out',
+                    onComplete: function() {
+                        // Pulsing animation on impact circle
+                        if (impactPulse) {
+                            gsap.to(impactPulse, {
+                                attr: { r: 14 },
+                                opacity: 0.3,
+                                duration: 0.8,
+                                ease: 'sine.inOut',
+                                yoyo: true,
+                                repeat: -1
+                            });
+                        }
+                        // Snowplow pulse
+                        gsap.to(snowplow, {
+                            opacity: 0.5,
+                            duration: 0.6,
+                            ease: 'sine.inOut',
+                            yoyo: true,
+                            repeat: -1
+                        });
+                    }
+                });
+            }
+        });
+    }
+    setup();
+})();
+
+// ================================================================
+// PRESENTATION MODE (Press P)
+// ================================================================
+(function initPresentationMode() {
+    var presBar = document.getElementById('presentation-bar');
+    var presScene = document.getElementById('pres-scene');
+    var presTimerFill = document.getElementById('pres-timer-fill');
+    var presActive = false;
+    var presTimer = null;
+    var presTimerStart = 0;
+    var PRES_DURATION = 12000;
+    var presRAF = null;
+
+    var sceneIds = ['scene-1','scene-2','scene-3','scene-4','scene-5','scene-6'];
+
+    function getPresCurrentIndex() {
+        var mid = window.innerHeight / 2;
+        for (var i = sceneIds.length - 1; i >= 0; i--) {
+            var el = document.getElementById(sceneIds[i]);
+            if (el) {
+                var rect = el.getBoundingClientRect();
+                if (rect.top <= mid) return i;
+            }
+        }
+        return 0;
+    }
+
+    function updatePresLabel() {
+        var idx = getPresCurrentIndex();
+        presScene.textContent = 'Scene ' + (idx + 1) + '/6';
+    }
+
+    function presAdvance() {
+        var idx = getPresCurrentIndex();
+        var next = idx + 1;
+        if (next < sceneIds.length) {
+            document.getElementById(sceneIds[next]).scrollIntoView({ behavior: 'smooth' });
+        } else {
+            var endEl = document.getElementById('scene-end');
+            if (endEl) endEl.scrollIntoView({ behavior: 'smooth' });
+        }
+        resetPresTimer();
+    }
+
+    function tickTimer() {
+        if (!presActive) return;
+        var elapsed = Date.now() - presTimerStart;
+        var pct = Math.min((elapsed / PRES_DURATION) * 100, 100);
+        presTimerFill.style.width = pct + '%';
+        updatePresLabel();
+        if (elapsed >= PRES_DURATION) {
+            presAdvance();
+        } else {
+            presRAF = requestAnimationFrame(tickTimer);
+        }
+    }
+
+    function resetPresTimer() {
+        if (presRAF) cancelAnimationFrame(presRAF);
+        if (presTimer) clearTimeout(presTimer);
+        presTimerStart = Date.now();
+        presTimerFill.style.width = '0%';
+        presRAF = requestAnimationFrame(tickTimer);
+    }
+
+    function startPresentation() {
+        presActive = true;
+        presBar.style.display = 'flex';
+        updatePresLabel();
+        var docEl = document.documentElement;
+        if (docEl.requestFullscreen) docEl.requestFullscreen();
+        else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
+        else if (docEl.msRequestFullscreen) docEl.msRequestFullscreen();
+        resetPresTimer();
+    }
+
+    function stopPresentation() {
+        presActive = false;
+        presBar.style.display = 'none';
+        if (presRAF) cancelAnimationFrame(presRAF);
+        if (presTimer) clearTimeout(presTimer);
+        presTimerFill.style.width = '0%';
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            else if (document.msExitFullscreen) document.msExitFullscreen();
+        }
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (!started) return;
+        if (e.key === 'p' || e.key === 'P') {
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            e.preventDefault();
+            if (presActive) {
+                stopPresentation();
+            } else {
+                startPresentation();
+            }
+            return;
+        }
+        if (presActive && (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'PageDown' || e.key === 'PageUp')) {
+            setTimeout(resetPresTimer, 50);
+        }
+        if (presActive && e.key >= '1' && e.key <= '6') {
+            setTimeout(resetPresTimer, 50);
+        }
+    });
+
+    document.addEventListener('fullscreenchange', function() {
+        if (!document.fullscreenElement && presActive) {
+            stopPresentation();
+        }
+    });
+    document.addEventListener('webkitfullscreenchange', function() {
+        if (!document.webkitFullscreenElement && presActive) {
+            stopPresentation();
+        }
+    });
+})();
+
+// ================================================================
+// PARALLAX LAYERS (Vanilla JS + RAF)
+// ================================================================
+(function initParallaxLayers() {
+    var parallaxElements = [];
+    var ticking = false;
+
+    function gatherElements() {
+        parallaxElements = [];
+        document.querySelectorAll('.scene[data-scene]').forEach(function(scene) {
+            scene.querySelectorAll('.scene-title').forEach(function(el) {
+                parallaxElements.push({ el: el, scene: scene, speed: -0.15 });
+            });
+            scene.querySelectorAll('.evidence-tag').forEach(function(el) {
+                parallaxElements.push({ el: el, scene: scene, speed: -0.1 });
+            });
+            scene.querySelectorAll('.data-grid, .pin-board, .evo-grid').forEach(function(el) {
+                parallaxElements.push({ el: el, scene: scene, speed: 0.08 });
+            });
+        });
+    }
+
+    function applyParallax() {
+        var vh = window.innerHeight;
+        var viewCenter = vh / 2;
+
+        for (var i = 0; i < parallaxElements.length; i++) {
+            var item = parallaxElements[i];
+            var sceneRect = item.scene.getBoundingClientRect();
+
+            if (sceneRect.bottom < -vh * 0.5 || sceneRect.top > vh * 1.5) {
+                item.el.style.transform = '';
+                continue;
+            }
+
+            var sceneCenter = sceneRect.top + sceneRect.height / 2;
+            var offset = sceneCenter - viewCenter;
+            var translate = offset * item.speed;
+            item.el.style.transform = 'translateY(' + translate + 'px)';
+        }
+        ticking = false;
+    }
+
+    function onScroll() {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(applyParallax);
+        }
+    }
+
+    function setup() {
+        if (!started) { setTimeout(setup, 300); return; }
+        gatherElements();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', function() {
+            gatherElements();
+            applyParallax();
+        });
+        applyParallax();
     }
     setup();
 })();
