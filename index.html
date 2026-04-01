@@ -24,7 +24,7 @@
             --typewriter: 'Special Elite', 'Courier New', monospace;
         }
 
-        html { scroll-behavior: smooth; scroll-snap-type: y proximity; }
+        html { scroll-behavior: smooth; }
 
         body {
             background: var(--bg);
@@ -417,9 +417,8 @@
             z-index: 2;
             min-height: 100vh;
             display: flex;
-            align-items: center;
-            padding: 100px 60px 120px;
-            scroll-snap-align: start;
+            align-items: flex-start;
+            padding: 120px 60px 140px;
         }
 
         .scene-inner {
@@ -1153,18 +1152,26 @@
 
         /* === RESPONSIVE === */
         @media (max-width: 768px) {
-            .scene { padding: 60px 20px 100px; }
+            .scene { padding: 80px 20px 100px; }
             .data-grid { grid-template-columns: 1fr 1fr; }
             .pin-board { grid-template-columns: 1fr; }
             .evo-grid { grid-template-columns: 1fr; }
             .dossier-row { flex-direction: column; }
             .newspaper-page { width: 260px; }
+            .archive-photo { max-width: 100%; max-height: 180px; }
+            .vnoukovo-map { max-width: 100%; padding: 12px; }
+            .logo-3d-wrap { margin: 16px 0; }
+            .logo-3d { max-width: 200px; padding: 20px; }
+            .logo-evolution { gap: 20px; }
+            .logo-evo-item img { max-width: 140px; padding: 12px; }
         }
         /* === ARCHIVE PHOTOS === */
         .archive-photo {
             width: 100%;
-            max-width: 500px;
-            margin: 20px 0;
+            max-width: 380px;
+            max-height: 220px;
+            object-fit: cover;
+            margin: 16px 0;
             border: 1px solid rgba(255,255,255,0.08);
             filter: grayscale(70%) contrast(1.1) sepia(15%);
             opacity: 0.85;
@@ -1523,8 +1530,8 @@
         /* --- VNOUKOVO MINIMAP --- */
         .vnoukovo-map {
             width: 100%;
-            max-width: 600px;
-            margin: 30px auto;
+            max-width: 500px;
+            margin: 20px auto;
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: 8px;
