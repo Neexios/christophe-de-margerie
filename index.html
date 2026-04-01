@@ -1329,26 +1329,6 @@
             color: var(--red-light);
         }
 
-        /* === DECLASSIFIED STAMP === */
-        #declassified-stamp {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-5deg) scale(2);
-            z-index: 5000;
-            pointer-events: none;
-            opacity: 0;
-            font-family: var(--typewriter);
-            font-size: clamp(28px, 4vw, 48px);
-            font-weight: 700;
-            color: var(--red);
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            border: 5px solid var(--red);
-            padding: 14px 40px;
-            background: rgba(12, 12, 20, 0.7);
-            white-space: nowrap;
-        }
 
         /* === MUTE BUTTON === */
         #sound-toggle {
@@ -1501,9 +1481,6 @@
     </style>
 </head>
 <body>
-
-<!-- === DECLASSIFIED STAMP (reusable) === -->
-<div id="declassified-stamp">DÉCLASSIFIÉ</div>
 
 <!-- === SOUND TOGGLE === -->
 <button id="sound-toggle" title="Activer/Désactiver le son">🔇</button>
@@ -2736,9 +2713,9 @@ function initScrollAnims() {
         onEnter: () => gsap.to('#scroll-cta', { opacity: 0, duration: 0.4, onComplete: () => { document.getElementById('scroll-cta').style.display = 'none'; } })
     });
 
-    // Breaking News TV transition before scene 4 (the accident)
+    // Breaking News TV transition before scene 3 (the accident)
     ScrollTrigger.create({
-        trigger: '#scene-4',
+        trigger: '#scene-3',
         start: 'top 80%',
         once: true,
         onEnter: () => {
@@ -3092,42 +3069,6 @@ function initProgressBar() {
     setupRedacted();
 })();
 
-// ================================================================
-// FEATURE 2: DECLASSIFIED STAMP
-// ================================================================
-(function initDeclassifiedStamp() {
-    var stampEl = document.getElementById('declassified-stamp');
-    if (!stampEl) return;
-    var stampedScenes = new Set();
-
-    function setupStamp() {
-        if (!started) { setTimeout(setupStamp, 300); return; }
-        document.querySelectorAll('.scene[data-scene]').forEach(function(scene) {
-            var sceneId = scene.id;
-            var sceneNum = scene.dataset.scene;
-            ScrollTrigger.create({
-                trigger: scene,
-                start: 'top 55%',
-                onEnter: function() {
-                    if (sceneNum !== '1' && sceneNum !== '4' && sceneNum !== '6') return;
-                    if (stampedScenes.has(sceneId)) return;
-                    stampedScenes.add(sceneId);
-                    gsap.killTweensOf(stampEl);
-                    gsap.set(stampEl, { opacity: 1, scale: 2, rotation: -12 });
-                    gsap.to(stampEl, {
-                        scale: 1, rotation: -5, duration: 0.3, ease: 'back.out(2)',
-                        onComplete: function() {
-                            gsap.to(stampEl, {
-                                opacity: 0, duration: 0.6, delay: 1.5, ease: 'power2.in'
-                            });
-                        }
-                    });
-                }
-            });
-        });
-    }
-    setupStamp();
-})();
 
 // ================================================================
 // FEATURE 3: AMBIENT SOUNDS (Web Audio API, procedural)
