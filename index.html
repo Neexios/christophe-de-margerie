@@ -1599,7 +1599,7 @@
 <!-- === PRESENTATION BAR === -->
 <div id="presentation-bar">
     <span id="pres-label">MODE PRESENTATION</span>
-    <span id="pres-scene">Scene 1/6</span>
+    <span id="pres-scene">Scene 1/7</span>
     <div class="timer-bar"><div class="timer-fill" id="pres-timer-fill"></div></div>
 </div>
 
@@ -2049,7 +2049,31 @@
                 <p>Pouyanné maintient le cap russe — Yamal LNG achevé. Il faudra l'invasion de l'Ukraine (2022) pour forcer le retrait. Total devient TotalEnergies (2021) : transformation profonde.</p>
             </div>
         </div>
-        <div class="logo-evolution">
+    </div>
+</section>
+
+<!-- ==================== SCENE 7 ==================== -->
+<section class="scene" id="scene-7" data-scene="7">
+    <div class="scene-inner">
+        <div class="evidence-tag">Pièce C-2 &mdash; Conclusion</div>
+        <h2 class="scene-title">Vnoukovo, un <span style="color:var(--red)">révélateur</span></h2>
+        <div class="scene-subtitle">Synthèse des rapports de force et enseignements</div>
+        <div class="typewriter-text">
+            Qu'il s'agisse d'un tragique accident ou de l'hypothèse invérifiable d'un acte malveillant, l'analyse d'IE démontre que Christophe de Margerie se trouvait à l'<span class="highlight">épicentre d'un ouragan d'intérêts divergents</span>. En s'attaquant au monopole du pétrodollar et en maintenant un pont avec une Russie sous sanctions, il contrariait la politique étrangère américaine et menaçait l'équilibre financier mondial — tout en naviguant au milieu des <span class="highlight-red">luttes de clans oligarchiques</span>.<span class="tw-cursor"></span>
+        </div>
+        <div class="dossier-row">
+            <div class="dossier-item">
+                <div class="pin"></div>
+                <h4>L'accident comme révélateur systémique</h4>
+                <p>Vnoukovo dépasse le fait divers. Il a mis en lumière l'extrême vulnérabilité physique des plus hauts dirigeants dans des environnements où standards de sécurité et gouvernance sont défaillants. La stabilité d'une multinationale peut tenir à la sécurité d'un seul homme sur une piste enneigée.</p>
+            </div>
+            <div class="dossier-item">
+                <div class="pin"></div>
+                <h4>La question qui reste</h4>
+                <p>La question n'est pas tant de savoir <em>qui l'a tué</em>, mais de comprendre <strong>à qui sa disparition a profité</strong> — ou qui elle a soulagé. Du jour au lendemain, Total a dû rassurer marchés, gouvernements et partenaires russes.</p>
+            </div>
+        </div>
+        <div class="logo-evolution" style="margin-top:30px;">
             <div class="logo-evo-item">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Total_wordmark_%282003-2021%29.svg/400px-Total_wordmark_%282003-2021%29.svg.png" alt="Total">
                 <div class="evo-label">Total — 2003-2021</div>
@@ -2058,6 +2082,28 @@
             <div class="logo-evo-item">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Logo_TotalEnergies_%282021%29.png/400px-Logo_TotalEnergies_%282021%29.png" alt="TotalEnergies">
                 <div class="evo-label">TotalEnergies — 2021+</div>
+            </div>
+        </div>
+        <div class="evo-grid" style="margin-top:30px;">
+            <div class="evo-card">
+                <div class="evo-year" style="color:var(--red)">2014</div>
+                <h4>Pouyanné succède à CDM</h4>
+                <p>Continuité stratégique. Maintien des actifs russes. Yamal LNG achevé.</p>
+            </div>
+            <div class="evo-card">
+                <div class="evo-year">2021</div>
+                <h4>Total → TotalEnergies</h4>
+                <p>Rebranding symbolisant le virage vers les renouvelables. Mais la Russie reste.</p>
+            </div>
+            <div class="evo-card">
+                <div class="evo-year" style="color:var(--red)">2022</div>
+                <h4 style="color:var(--red-light)">Invasion de l'Ukraine</h4>
+                <p>Seul un choc systémique majeur force enfin le retrait — douloureux et coûteux — de Russie.</p>
+            </div>
+            <div class="evo-card">
+                <div class="evo-year">2024</div>
+                <h4>Le rôle de l'IE</h4>
+                <p>Cartographier les menaces, anticiper le Key Person Risk, maîtriser la guerre de l'information. Vigilance et résilience absolues.</p>
             </div>
         </div>
         <div class="data-grid" style="margin-top:24px;">
@@ -2127,7 +2173,7 @@
 // CONFIG
 // ================================================================
 const SCENES = document.querySelectorAll('.scene[data-scene]');
-const SCENE_NAMES = ['Le sujet', 'Les tensions', 'L\'accident', 'Cui Bono', 'Info War', 'Bilan IE'];
+const SCENE_NAMES = ['Le sujet', 'Les tensions', 'L\'accident', 'Cui Bono', 'Info War', 'Bilan IE', 'Conclusion'];
 let started = false;
 
 // ================================================================
@@ -3736,7 +3782,7 @@ function initProgressBar() {
 
     function updatePresLabel() {
         var idx = getPresCurrentIndex();
-        presScene.textContent = 'Scene ' + (idx + 1) + '/6';
+        presScene.textContent = 'Scene ' + (idx + 1) + '/' + SCENES.length;
     }
 
     function presAdvance() {
