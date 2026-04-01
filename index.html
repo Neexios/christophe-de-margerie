@@ -1047,6 +1047,110 @@
             perspective: 1200px;
         }
 
+        /* === LOADING SCREEN === */
+        #loading-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 3000;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--typewriter);
+            color: var(--white);
+        }
+
+        #loading-screen .loading-text {
+            font-size: 18px;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            min-height: 1.5em;
+        }
+
+        #loading-screen .loading-text .typing-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1em;
+            background: var(--red);
+            margin-left: 3px;
+            vertical-align: text-bottom;
+            animation: blink-cursor 0.7s steps(1) infinite;
+        }
+
+        #loading-screen .loading-bar-container {
+            width: 320px;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        #loading-screen .loading-bar-fill {
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--red), var(--gold));
+            transition: width 0.15s linear;
+        }
+
+        #loading-screen .loading-log {
+            font-size: 12px;
+            color: var(--gray);
+            letter-spacing: 2px;
+            text-align: center;
+            min-height: 1.4em;
+        }
+
+        /* === FLASHLIGHT / SPOTLIGHT === */
+        #flashlight-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle 300px at 50% 50%, transparent 0%, rgba(0,0,0,0.35) 100%);
+        }
+
+        #flashlight-overlay.active {
+            opacity: 1;
+        }
+
+        #flashlight-toggle {
+            position: fixed;
+            top: 16px; right: 16px;
+            z-index: 2500;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--gray);
+            font-size: 18px;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-family: sans-serif;
+            line-height: 1;
+            opacity: 0;
+        }
+
+        #flashlight-toggle:hover {
+            background: rgba(255,255,255,0.12);
+            color: var(--white);
+        }
+
+        #flashlight-toggle.active {
+            background: rgba(212,168,75,0.15);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
         /* === RESPONSIVE === */
         @media (max-width: 768px) {
             .scene { padding: 60px 20px 100px; }
@@ -1056,9 +1160,132 @@
             .dossier-row { flex-direction: column; }
             .newspaper-page { width: 260px; }
         }
+        /* === ARCHIVE PHOTOS === */
+        .archive-photo {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.08);
+            filter: grayscale(70%) contrast(1.1) sepia(15%);
+            opacity: 0.85;
+            transition: all 0.4s;
+            position: relative;
+        }
+        .archive-photo:hover {
+            filter: grayscale(30%) contrast(1.05);
+            opacity: 1;
+        }
+        .archive-caption {
+            font-family: var(--typewriter);
+            font-size: 11px;
+            color: var(--gray);
+            letter-spacing: 1px;
+            margin-top: 6px;
+            text-transform: uppercase;
+        }
+        .photo-evidence {
+            display: inline-block;
+            position: relative;
+        }
+        .photo-evidence::before {
+            content: 'PIÈCE À CONVICTION';
+            position: absolute;
+            top: 10px; left: 10px;
+            font-family: var(--typewriter);
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--red);
+            background: rgba(12,12,20,0.8);
+            padding: 3px 8px;
+            z-index: 1;
+        }
+
+        /* === REDACTED / DECLASSIFIED TEXT === */
+        .redacted {
+            background: #111;
+            color: #111;
+            transition: all 0.6s;
+            padding: 0 4px;
+            border-radius: 2px;
+        }
+        .redacted.revealed {
+            background: transparent;
+            color: var(--gold);
+        }
+        .redacted.highlight-red.revealed {
+            color: var(--red-light);
+        }
+
+        /* === DECLASSIFIED STAMP === */
+        #declassified-stamp {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-5deg) scale(2);
+            z-index: 5000;
+            pointer-events: none;
+            opacity: 0;
+            font-family: var(--typewriter);
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 700;
+            color: var(--red);
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            border: 5px solid var(--red);
+            padding: 14px 40px;
+            background: rgba(12, 12, 20, 0.7);
+            white-space: nowrap;
+        }
+
+        /* === MUTE BUTTON === */
+        #sound-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 6000;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(12, 12, 20, 0.8);
+            backdrop-filter: blur(8px);
+            color: var(--gray);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.3s, color 0.3s;
+            opacity: 0;
+        }
+        #sound-toggle:hover {
+            border-color: var(--gold);
+            color: var(--white);
+        }
+        #sound-toggle.active {
+            border-color: var(--red);
+            color: var(--red-light);
+        }
     </style>
 </head>
 <body>
+
+<!-- === DECLASSIFIED STAMP (reusable) === -->
+<div id="declassified-stamp">DÉCLASSIFIÉ</div>
+
+<!-- === SOUND TOGGLE === -->
+<button id="sound-toggle" title="Activer/Désactiver le son">🔇</button>
+
+<!-- === LOADING SCREEN === -->
+<div id="loading-screen">
+    <div class="loading-text"><span class="typing-cursor"></span></div>
+    <div class="loading-bar-container"><div class="loading-bar-fill" id="loading-bar-fill"></div></div>
+    <div class="loading-log" id="loading-log"></div>
+</div>
+
+<!-- === FLASHLIGHT OVERLAY === -->
+<div id="flashlight-overlay"></div>
+<button id="flashlight-toggle" title="Lampe torche">&#128294;</button>
 
 <!-- === INTRO === -->
 <div id="intro">
@@ -1167,7 +1394,7 @@
         <h2 class="scene-title">"Big Moustache"</h2>
         <div class="scene-subtitle">L'ascension d'un patron hors norme</div>
         <div class="typewriter-text" id="tw-1">
-            Entré chez Total en <span class="highlight">1974</span> comme simple cadre commercial, Christophe de Margerie gravit un à un les échelons du géant pétrolier. Nommé PDG en <span class="highlight">2007</span>, il impose un style direct et un sens politique rare dans le milieu feutré de l'énergie. Sous sa direction, Total s'implante dans <span class="highlight">130 pays</span> et devient la 4e major mondiale.<span class="tw-cursor"></span>
+            Entré chez Total en <span class="highlight redacted">1974</span> comme simple cadre commercial, Christophe de Margerie gravit un à un les échelons du géant pétrolier. Nommé PDG en <span class="highlight redacted">2007</span>, il impose un style direct et un sens politique rare dans le milieu feutré de l'énergie. Sous sa direction, Total s'implante dans <span class="highlight">130 pays</span> et devient la 4e major mondiale.<span class="tw-cursor"></span>
         </div>
         <div class="data-grid">
             <div class="data-card">
@@ -1197,7 +1424,11 @@
         <h2 class="scene-title">Total & la <span style="color:var(--red-light)">Russie</span></h2>
         <div class="scene-subtitle">Le pari stratégique de l'Est — Paris ↔ Moscou</div>
         <div class="typewriter-text">
-            Sous l'impulsion de de Margerie, Total devient le <span class="highlight">premier investisseur étranger</span> dans l'énergie russe. Le groupe détient <span class="highlight">18%</span> de Novatek et participe au projet arctique <span class="highlight">Yamal LNG</span> — 27 milliards de dollars. De Margerie entretient un lien direct avec le Kremlin, convaincu que le dialogue est la seule voie.<span class="tw-cursor"></span>
+            Sous l'impulsion de de Margerie, Total devient le <span class="highlight">premier investisseur étranger</span> dans l'énergie russe. Le groupe détient <span class="highlight redacted">18%</span> de Novatek et participe au projet arctique <span class="highlight redacted">Yamal LNG</span> — 27 milliards de dollars. De Margerie entretient un lien direct avec le Kremlin, convaincu que le dialogue est la seule voie.<span class="tw-cursor"></span>
+        </div>
+        <div class="photo-evidence">
+            <img class="archive-photo" src="https://upload.wikimedia.org/wikipedia/commons/9/93/Ceremony_of_loading_of_the_first_LNG_tanker_within_the_project_of_Yamal_LNG_1.jpg" alt="Projet Yamal LNG — Chargement du premier tanker de GNL, 2017" loading="lazy">
+            <div class="archive-caption">Yamal LNG — Cérémonie de chargement du premier tanker, 8 décembre 2017 &bull; Kremlin.ru / CC BY 4.0</div>
         </div>
         <div class="dossier-row">
             <div class="dossier-item">
@@ -1240,7 +1471,7 @@
         <h2 class="scene-title">Crimée <span style="color:var(--red)">2014</span></h2>
         <div class="scene-subtitle">Quand les sanctions montent, de Margerie maintient le pont</div>
         <div class="typewriter-text">
-            Mars 2014 : la Russie annexe la Crimée. L'Occident impose des <span class="highlight-red">sanctions économiques</span> croissantes. Les majors américaines reculent. De Margerie, lui, défie la pression : <em>"On ne règle pas les problèmes du monde en isolant les gens."</em> Il sera le dernier grand patron occidental à maintenir le dialogue avec Moscou.<span class="tw-cursor"></span>
+            Mars 2014 : la Russie annexe la Crimée. L'Occident impose des <span class="highlight-red redacted">sanctions économiques</span> croissantes. Les majors américaines reculent. De Margerie, lui, défie la pression : <em>"On ne règle pas les problèmes du monde en isolant les gens."</em> Il sera le dernier grand patron occidental à maintenir le dialogue avec Moscou.<span class="tw-cursor"></span>
         </div>
         <div class="v-timeline">
             <div class="v-tl-item critical">
@@ -1274,7 +1505,17 @@
         <h2 class="scene-title" style="color:var(--red)">20 octobre 2014</h2>
         <div class="scene-subtitle">23h57 — Piste 06, Aéroport de Vnoukovo, Moscou</div>
         <div class="typewriter-text" style="border-color:var(--red);">
-            Après un dîner officiel avec <span class="highlight">Dmitri Medvedev</span>, Christophe de Margerie rejoint le terminal VIP de Vnoukovo-3. Son <span class="highlight">Dassault Falcon 50</span> reçoit l'autorisation de décoller. Visibilité : <span class="highlight-red">350 mètres</span>. Brouillard givrant. Sur la piste, un chasse-neige conduit par un homme en état d'ébriété. L'avion le percute à pleine vitesse. Explosion. <span class="highlight-red">Aucun survivant.</span><span class="tw-cursor"></span>
+            Après un dîner officiel avec <span class="highlight">Dmitri Medvedev</span>, Christophe de Margerie rejoint le terminal VIP de Vnoukovo-3. Son <span class="highlight">Dassault Falcon 50</span> reçoit l'autorisation de décoller. Visibilité : <span class="highlight-red redacted">350 mètres</span>. Brouillard givrant. Sur la piste, un chasse-neige conduit par un homme en état d'ébriété (<span class="highlight-red redacted">0.87 g/L</span>). L'avion le percute à pleine vitesse. Explosion. <span class="highlight-red redacted">Aucun survivant.</span><span class="tw-cursor"></span>
+        </div>
+        <div class="photo-evidence" style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start;">
+            <div>
+                <img class="archive-photo" src="https://upload.wikimedia.org/wikipedia/commons/8/85/Dassault_Falcon_50_YV1495.jpg" alt="Dassault Falcon 50 — Même modèle que l'appareil de Christophe de Margerie" loading="lazy" style="max-width:340px;">
+                <div class="archive-caption">Dassault Falcon 50 — Même type d'appareil que celui de l'accident &bull; Alex Steffler / CC BY 2.0</div>
+            </div>
+            <div>
+                <img class="archive-photo" src="https://upload.wikimedia.org/wikipedia/commons/4/44/Vnukovo_International_Airport_2019.jpg" alt="Aéroport international de Vnoukovo, Moscou" loading="lazy" style="max-width:340px;">
+                <div class="archive-caption">Aéroport de Vnoukovo, Moscou — Lieu du drame &bull; mos.ru / CC BY 4.0</div>
+            </div>
         </div>
         <div class="v-timeline">
             <div class="v-tl-item">
@@ -1327,6 +1568,10 @@
         <div class="scene-subtitle">Une chaîne de défaillances humaines</div>
         <div class="typewriter-text">
             L'enquête révèle une <span class="highlight-red">accumulation de négligences</span>. Trois responsables identifiés. Le procès s'ouvre en <span class="highlight">2019</span> à Moscou. Les peines, jugées "légères" par la famille de Margerie, soulèvent l'indignation.<span class="tw-cursor"></span>
+        </div>
+        <div class="photo-evidence">
+            <img class="archive-photo" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Babushkinsky_District_Court_of_Moscow_2021-04-14_01.jpg" alt="Tribunal de district de Moscou" loading="lazy">
+            <div class="archive-caption">Tribunal de district, Moscou — Justice russe &bull; Wikimedia Commons / CC BY-SA 4.0</div>
         </div>
         <div class="pin-board">
             <div class="pin-card">
@@ -1629,6 +1874,10 @@ let scene3D, camera, renderer, globeMesh, globeDots, particles;
 let strategicLabels = [];
 let mx = 0, my = 0;
 
+// Flight path Paris -> Moscow
+let flightCurve, flightPlaneMesh, flightTrailLine, flightTrailMat, flightProgress = { value: 0 };
+let flightExploded = false;
+
 const STRATEGIC_POINTS = [
     { name: 'Paris', lat: 48.86, lon: 2.35, color: 0xd4a84b },
     { name: 'Moscou', lat: 55.75, lon: 37.62, color: 0xe74c3c },
@@ -1751,6 +2000,45 @@ function init3D() {
     }));
     scene3D.add(particles);
 
+    // === FLIGHT PATH Paris -> Moscow ===
+    const parisPos = latLonToVec3(48.86, 2.35, 1.65);
+    parisPos.x += 2; parisPos.y += 0.3; parisPos.z -= 1;
+    const moscowPos = latLonToVec3(55.75, 37.62, 1.65);
+    moscowPos.x += 2; moscowPos.y += 0.3; moscowPos.z -= 1;
+
+    // Control points for a high-altitude cubic bezier (airplane arc)
+    const flightMid = new THREE.Vector3().addVectors(parisPos, moscowPos).multiplyScalar(0.5);
+    const flightDir = flightMid.clone().sub(new THREE.Vector3(2, 0.3, -1)).normalize();
+    const cp1 = parisPos.clone().lerp(moscowPos, 0.33);
+    cp1.add(flightDir.clone().multiplyScalar(0.9));
+    const cp2 = parisPos.clone().lerp(moscowPos, 0.66);
+    cp2.add(flightDir.clone().multiplyScalar(0.9));
+    flightCurve = new THREE.CubicBezierCurve3(parisPos.clone(), cp1, cp2, moscowPos.clone());
+
+    // Trail line (drawn progressively via drawRange)
+    const trailPoints = flightCurve.getPoints(100);
+    const trailGeo = new THREE.BufferGeometry().setFromPoints(trailPoints);
+    flightTrailMat = new THREE.LineBasicMaterial({
+        color: 0xd4a84b, transparent: true, opacity: 0.8
+    });
+    flightTrailLine = new THREE.Line(trailGeo, flightTrailMat);
+    flightTrailLine.geometry.setDrawRange(0, 0);
+    scene3D.add(flightTrailLine);
+
+    // Airplane point (small glowing golden sphere)
+    const planeGeo = new THREE.SphereGeometry(0.02, 16, 16);
+    const planeMat = new THREE.MeshBasicMaterial({ color: 0xd4a84b });
+    flightPlaneMesh = new THREE.Mesh(planeGeo, planeMat);
+    flightPlaneMesh.position.copy(parisPos);
+    flightPlaneMesh.visible = false;
+    scene3D.add(flightPlaneMesh);
+
+    // Glow ring around the airplane
+    const planeGlowGeo = new THREE.RingGeometry(0.025, 0.04, 32);
+    const planeGlowMat = new THREE.MeshBasicMaterial({ color: 0xd4a84b, transparent: true, opacity: 0.5, side: THREE.DoubleSide });
+    const planeGlow = new THREE.Mesh(planeGlowGeo, planeGlowMat);
+    flightPlaneMesh.add(planeGlow);
+
     document.addEventListener('mousemove', e => {
         mx = (e.clientX / innerWidth - 0.5) * 2;
         my = (e.clientY / innerHeight - 0.5) * 2;
@@ -1822,6 +2110,21 @@ function animate3D() {
         sl.el.style.display = v.z < 1 ? 'block' : 'none';
         sl.el.style.opacity = (v.z < 1 && sp < 0.5) ? 0.8 : 0;
     });
+
+    // Update flight path (airplane position + trail)
+    if (flightCurve && flightPlaneMesh) {
+        const prog = flightProgress.value;
+        if (prog > 0) {
+            flightPlaneMesh.visible = true;
+            const pt = flightCurve.getPoint(Math.min(prog, 1));
+            flightPlaneMesh.position.copy(pt);
+            // Draw trail progressively (101 vertices total)
+            flightTrailLine.geometry.setDrawRange(0, Math.floor(Math.min(prog, 1) * 101));
+        } else {
+            flightPlaneMesh.visible = false;
+            flightTrailLine.geometry.setDrawRange(0, 0);
+        }
+    }
 
     renderer.render(scene3D, camera);
 }
@@ -2220,6 +2523,54 @@ function initScrollAnims() {
             tl.to(overlay, { opacity: 0, duration: 0.4, ease: 'power2.in' });
         }
     });
+
+    // === FLIGHT PATH ANIMATION (Paris -> Moscow) during Scene 4 ===
+    if (flightCurve && flightPlaneMesh) {
+        flightProgress.value = 0;
+        flightExploded = false;
+
+        gsap.to(flightProgress, {
+            value: 1,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '#scene-4',
+                start: 'top 80%',
+                end: 'bottom 30%',
+                scrub: 1,
+                onUpdate: function(self) {
+                    var prog = self.progress;
+                    if (prog >= 0.95 && !flightExploded) {
+                        flightExploded = true;
+                        flightPlaneMesh.material.color.setHex(0xc0392b);
+                        if (flightPlaneMesh.children[0]) {
+                            flightPlaneMesh.children[0].material.color.setHex(0xc0392b);
+                        }
+                        gsap.to(flightPlaneMesh.scale, {
+                            x: 3, y: 3, z: 3, duration: 0.3, ease: 'power2.out',
+                            onComplete: function() {
+                                gsap.to(flightPlaneMesh.scale, {
+                                    x: 1, y: 1, z: 1, duration: 0.5, ease: 'power2.in'
+                                });
+                            }
+                        });
+                        flightTrailMat.color.setHex(0xc0392b);
+                        gsap.delayedCall(0.8, function() {
+                            flightTrailMat.color.setHex(0xd4a84b);
+                        });
+                    }
+                    if (prog < 0.9 && flightExploded) {
+                        flightExploded = false;
+                        flightPlaneMesh.material.color.setHex(0xd4a84b);
+                        if (flightPlaneMesh.children[0]) {
+                            flightPlaneMesh.children[0].material.color.setHex(0xd4a84b);
+                        }
+                        flightPlaneMesh.scale.set(1, 1, 1);
+                        flightTrailMat.color.setHex(0xd4a84b);
+                    }
+                }
+            }
+        });
+    }
 }
 
 // ================================================================
@@ -2272,6 +2623,416 @@ function initProgressBar() {
         });
     });
 }
+
+// ================================================================
+// LOADING SCREEN
+// ================================================================
+(function loadingScreen() {
+    const screen = document.getElementById('loading-screen');
+    if (!screen) return;
+
+    const textEl = screen.querySelector('.loading-text');
+    const barFill = document.getElementById('loading-bar-fill');
+    const logEl = document.getElementById('loading-log');
+
+    const messages = [
+        'Connexion au serveur sécurisé...',
+        'Vérification des accréditations...',
+        'Déchiffrement des documents...',
+        'Accès autorisé.'
+    ];
+
+    const mainText = 'Accès aux fichiers classifiés...';
+    let charIdx = 0;
+    let msgIdx = 0;
+    const totalDuration = 3000;
+    const startTime = Date.now();
+
+    // Typewriter effect for main text
+    function typeMain() {
+        if (charIdx <= mainText.length) {
+            textEl.innerHTML = mainText.slice(0, charIdx) + '<span class="typing-cursor"></span>';
+            charIdx++;
+            setTimeout(typeMain, 50);
+        }
+    }
+    typeMain();
+
+    // Progress bar + log messages
+    function updateProgress() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / totalDuration, 1);
+        barFill.style.width = (progress * 100) + '%';
+
+        // Show messages at thresholds
+        const newMsgIdx = Math.min(Math.floor(progress * messages.length), messages.length - 1);
+        if (newMsgIdx !== msgIdx || msgIdx === 0) {
+            msgIdx = newMsgIdx;
+            logEl.textContent = messages[msgIdx];
+        }
+
+        if (progress < 1) {
+            requestAnimationFrame(updateProgress);
+        } else {
+            // Done - fade out loading screen
+            logEl.textContent = messages[messages.length - 1];
+            setTimeout(function() {
+                screen.style.transition = 'opacity 0.6s ease';
+                screen.style.opacity = '0';
+                setTimeout(function() {
+                    screen.remove();
+                }, 600);
+            }, 400);
+        }
+    }
+    requestAnimationFrame(updateProgress);
+})();
+
+// ================================================================
+// KEYBOARD NAVIGATION
+// ================================================================
+(function keyboardNav() {
+    const sceneIds = ['scene-1','scene-2','scene-3','scene-4','scene-5','scene-6'];
+
+    function getCurrentSceneIndex() {
+        const mid = window.innerHeight / 2;
+        for (let i = sceneIds.length - 1; i >= 0; i--) {
+            const el = document.getElementById(sceneIds[i]);
+            if (el) {
+                const rect = el.getBoundingClientRect();
+                if (rect.top <= mid) return i;
+            }
+        }
+        return -1;
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (!started) return;
+
+        // Number keys 1-6
+        if (e.key >= '1' && e.key <= '6') {
+            const idx = parseInt(e.key) - 1;
+            const el = document.getElementById(sceneIds[idx]);
+            if (el) {
+                e.preventDefault();
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+            return;
+        }
+
+        // Arrow keys and Page Up/Down
+        let direction = 0;
+        if (e.key === 'ArrowDown' || e.key === 'PageDown') direction = 1;
+        else if (e.key === 'ArrowUp' || e.key === 'PageUp') direction = -1;
+
+        if (direction !== 0) {
+            e.preventDefault();
+            const current = getCurrentSceneIndex();
+            const next = current + direction;
+            if (next >= 0 && next < sceneIds.length) {
+                document.getElementById(sceneIds[next]).scrollIntoView({ behavior: 'smooth' });
+            } else if (next < 0) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (next >= sceneIds.length) {
+                const endEl = document.getElementById('scene-end');
+                if (endEl) endEl.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+})();
+
+// ================================================================
+// FLASHLIGHT / SPOTLIGHT EFFECT
+// ================================================================
+(function flashlightEffect() {
+    const overlay = document.getElementById('flashlight-overlay');
+    const toggle = document.getElementById('flashlight-toggle');
+    if (!overlay || !toggle) return;
+
+    let isActive = false;
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    function updateGradient() {
+        overlay.style.background =
+            'radial-gradient(circle 300px at ' + mouseX + 'px ' + mouseY + 'px, transparent 0%, rgba(0,0,0,0.35) 100%)';
+    }
+
+    document.addEventListener('mousemove', function(e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        if (isActive) updateGradient();
+    });
+
+    toggle.addEventListener('click', function() {
+        isActive = !isActive;
+        if (isActive) {
+            overlay.classList.add('active');
+            toggle.classList.add('active');
+            updateGradient();
+        } else {
+            overlay.classList.remove('active');
+            toggle.classList.remove('active');
+        }
+    });
+
+    // Show the toggle button once experience starts (observe intro removal)
+    function showToggle() {
+        if (started) {
+            gsap.to(toggle, { opacity: 1, duration: 0.5 });
+        } else {
+            setTimeout(showToggle, 500);
+        }
+    }
+    showToggle();
+})();
+
+// ================================================================
+// FEATURE 1: REDACTED TEXT REVEAL
+// ================================================================
+(function initRedactedReveal() {
+    function setupRedacted() {
+        if (!started) { setTimeout(setupRedacted, 300); return; }
+        document.querySelectorAll('.scene[data-scene]').forEach(function(scene) {
+            var redactedEls = scene.querySelectorAll('.redacted');
+            if (redactedEls.length === 0) return;
+            ScrollTrigger.create({
+                trigger: scene,
+                start: 'top 55%',
+                onEnter: function() {
+                    redactedEls.forEach(function(el, i) {
+                        setTimeout(function() {
+                            el.classList.add('revealed');
+                        }, i * 300);
+                    });
+                },
+                onLeaveBack: function() {
+                    redactedEls.forEach(function(el) {
+                        el.classList.remove('revealed');
+                    });
+                }
+            });
+        });
+    }
+    setupRedacted();
+})();
+
+// ================================================================
+// FEATURE 2: DECLASSIFIED STAMP
+// ================================================================
+(function initDeclassifiedStamp() {
+    var stampEl = document.getElementById('declassified-stamp');
+    if (!stampEl) return;
+    var stampedScenes = new Set();
+
+    function setupStamp() {
+        if (!started) { setTimeout(setupStamp, 300); return; }
+        document.querySelectorAll('.scene[data-scene]').forEach(function(scene) {
+            var sceneId = scene.id;
+            ScrollTrigger.create({
+                trigger: scene,
+                start: 'top 55%',
+                onEnter: function() {
+                    if (stampedScenes.has(sceneId)) return;
+                    stampedScenes.add(sceneId);
+                    gsap.killTweensOf(stampEl);
+                    gsap.set(stampEl, { opacity: 1, scale: 2, rotation: -12 });
+                    gsap.to(stampEl, {
+                        scale: 1, rotation: -5, duration: 0.3, ease: 'back.out(2)',
+                        onComplete: function() {
+                            gsap.to(stampEl, {
+                                opacity: 0, duration: 0.6, delay: 1.5, ease: 'power2.in'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    }
+    setupStamp();
+})();
+
+// ================================================================
+// FEATURE 3: AMBIENT SOUNDS (Web Audio API, procedural)
+// ================================================================
+(function initAmbientSounds() {
+    var audioCtx = null;
+    var soundEnabled = false;
+    var soundToggle = document.getElementById('sound-toggle');
+    if (!soundToggle) return;
+
+    function getAudioCtx() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return audioCtx;
+    }
+
+    // --- Typewriter clicks (scene 1) ---
+    var typewriterInterval = null;
+    function startTypewriter() {
+        if (typewriterInterval) return;
+        var ctx = getAudioCtx();
+        typewriterInterval = setInterval(function() {
+            if (!soundEnabled) return;
+            var bufSize = Math.floor(ctx.sampleRate * 0.012);
+            var buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+            var data = buf.getChannelData(0);
+            for (var i = 0; i < bufSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufSize * 0.3));
+            }
+            var src = ctx.createBufferSource();
+            src.buffer = buf;
+            var gain = ctx.createGain();
+            gain.gain.value = 0.06;
+            var hp = ctx.createBiquadFilter();
+            hp.type = 'highpass';
+            hp.frequency.value = 800;
+            src.connect(hp);
+            hp.connect(gain);
+            gain.connect(ctx.destination);
+            src.start();
+        }, 80 + Math.random() * 60);
+    }
+    function stopTypewriter() {
+        if (typewriterInterval) { clearInterval(typewriterInterval); typewriterInterval = null; }
+    }
+
+    // --- Wind sound (scene 4) ---
+    var windNode = null;
+    var windGain = null;
+    function startWind() {
+        if (windNode) return;
+        var ctx = getAudioCtx();
+        var bufSize = Math.floor(ctx.sampleRate * 2);
+        var buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        var data = buf.getChannelData(0);
+        for (var i = 0; i < bufSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        windNode = ctx.createBufferSource();
+        windNode.buffer = buf;
+        windNode.loop = true;
+        var lp = ctx.createBiquadFilter();
+        lp.type = 'lowpass';
+        lp.frequency.value = 400;
+        lp.Q.value = 1.5;
+        windGain = ctx.createGain();
+        windGain.gain.value = 0;
+        windNode.connect(lp);
+        lp.connect(windGain);
+        windGain.connect(ctx.destination);
+        windNode.start();
+        windGain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.5);
+    }
+    function stopWind() {
+        if (windGain && audioCtx) {
+            windGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
+        }
+        setTimeout(function() {
+            if (windNode) { try { windNode.stop(); } catch(e) {} windNode = null; windGain = null; }
+        }, 600);
+    }
+
+    // --- TV static / breaking news crackle ---
+    var staticNode = null;
+    var staticGain = null;
+    function startStatic() {
+        if (staticNode) return;
+        var ctx = getAudioCtx();
+        var bufSize = Math.floor(ctx.sampleRate * 2);
+        var buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        var data = buf.getChannelData(0);
+        for (var i = 0; i < bufSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        staticNode = ctx.createBufferSource();
+        staticNode.buffer = buf;
+        staticNode.loop = true;
+        var hp = ctx.createBiquadFilter();
+        hp.type = 'highpass';
+        hp.frequency.value = 3000;
+        staticGain = ctx.createGain();
+        staticGain.gain.value = 0;
+        staticNode.connect(hp);
+        hp.connect(staticGain);
+        staticGain.connect(ctx.destination);
+        staticNode.start();
+        staticGain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.2);
+    }
+    function stopStatic() {
+        if (staticGain && audioCtx) {
+            staticGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+        }
+        setTimeout(function() {
+            if (staticNode) { try { staticNode.stop(); } catch(e) {} staticNode = null; staticGain = null; }
+        }, 400);
+    }
+
+    // Toggle button
+    soundToggle.addEventListener('click', function() {
+        soundEnabled = !soundEnabled;
+        soundToggle.textContent = soundEnabled ? '\uD83D\uDD0A' : '\uD83D\uDD07';
+        soundToggle.classList.toggle('active', soundEnabled);
+        if (soundEnabled) {
+            getAudioCtx();
+        } else {
+            stopTypewriter();
+            stopWind();
+            stopStatic();
+        }
+    });
+
+    // Setup ScrollTrigger-based sounds
+    function setupSounds() {
+        if (!started) { setTimeout(setupSounds, 300); return; }
+
+        // Scene 1: typewriter clicks
+        ScrollTrigger.create({
+            trigger: '#scene-1',
+            start: 'top 55%',
+            end: 'bottom 20%',
+            onEnter: function() { if (soundEnabled) startTypewriter(); },
+            onLeave: function() { stopTypewriter(); },
+            onEnterBack: function() { if (soundEnabled) startTypewriter(); },
+            onLeaveBack: function() { stopTypewriter(); }
+        });
+
+        // Scene 4: wind
+        ScrollTrigger.create({
+            trigger: '#scene-4',
+            start: 'top 55%',
+            end: 'bottom 20%',
+            onEnter: function() { if (soundEnabled) startWind(); },
+            onLeave: function() { stopWind(); },
+            onEnterBack: function() { if (soundEnabled) startWind(); },
+            onLeaveBack: function() { stopWind(); }
+        });
+
+        // Breaking news static (scene 4 approach)
+        ScrollTrigger.create({
+            trigger: '#scene-4',
+            start: 'top 80%',
+            end: 'top 55%',
+            onEnter: function() { if (soundEnabled) startStatic(); },
+            onLeave: function() { stopStatic(); },
+            onEnterBack: function() { if (soundEnabled) startStatic(); },
+            onLeaveBack: function() { stopStatic(); }
+        });
+    }
+    setupSounds();
+
+    // Show sound button when experience starts
+    function showSoundBtn() {
+        if (started) {
+            gsap.to(soundToggle, { opacity: 1, duration: 0.5 });
+        } else {
+            setTimeout(showSoundBtn, 500);
+        }
+    }
+    showSoundBtn();
+})();
 </script>
 </body>
 </html>
