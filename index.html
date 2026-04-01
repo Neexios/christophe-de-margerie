@@ -1151,8 +1151,81 @@
         }
 
         /* === RESPONSIVE === */
+
+        /* --- Très grands écrans (4K, ultrawide) --- */
+        @media (min-width: 2560px) {
+            .scene-inner { max-width: 1600px; }
+            .scene { padding: 140px 80px 160px; }
+            .typewriter-text { font-size: 20px; max-width: 950px; }
+        }
+
+        /* --- Grands écrans (1920p+) --- */
+        @media (min-width: 1920px) {
+            .scene-inner { max-width: 1400px; }
+            .scene-title { font-size: clamp(48px, 5vw, 80px); }
+            .typewriter-text { font-size: 18px; max-width: 850px; }
+            .data-grid { gap: 28px; }
+            .data-value { font-size: clamp(36px, 4vw, 52px); }
+        }
+
+        /* --- Petits laptops (1366px de large) --- */
+        @media (max-width: 1400px) {
+            .scene { padding: 80px 40px 100px; }
+            .scene-title { font-size: clamp(28px, 4vw, 56px); }
+            .typewriter-text { font-size: 15px; line-height: 1.8; }
+            .data-grid { gap: 16px; }
+            .data-value { font-size: clamp(24px, 3vw, 38px); }
+            .archive-photo { max-width: 400px; }
+            .vnoukovo-map { max-width: 480px; }
+            .dossier-row { gap: 16px; }
+            .dossier-item { min-width: 200px; padding: 16px; }
+            .pin-board { gap: 16px; }
+            .pin-card { padding: 20px; }
+            .evo-grid { gap: 16px; }
+            .logo-3d { max-width: 220px; padding: 20px 30px; }
+        }
+
+        /* --- Tablettes (max-width: 1024px) --- */
+        @media (max-width: 1024px) {
+            .scene { padding: 80px 30px 100px; }
+            .data-grid { grid-template-columns: repeat(2, 1fr); }
+            .pin-board { grid-template-columns: repeat(2, 1fr); }
+            .evo-grid { grid-template-columns: repeat(2, 1fr); }
+            .dossier-row { flex-wrap: wrap; }
+            .dossier-item { min-width: 45%; }
+        }
+
+        /* --- Très petits écrans en hauteur (laptops 768px de haut) --- */
+        @media (max-height: 800px) {
+            .scene { padding: 70px 40px 80px; }
+            .scene-title { font-size: clamp(24px, 3.5vw, 48px); }
+            .scene-subtitle { font-size: clamp(12px, 1.3vw, 16px); margin-bottom: 24px; }
+            .typewriter-text { font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+            .data-grid { gap: 12px; margin-top: 20px; }
+            .data-card { padding: 16px; }
+            .data-value { font-size: clamp(22px, 3vw, 32px); }
+            .evidence-tag { font-size: 10px; padding: 4px 12px; margin-bottom: 10px; }
+            .v-timeline { margin-top: 20px; }
+            .v-tl-item { padding-bottom: 20px; }
+            .archive-photo { max-width: 350px; max-height: 200px; object-fit: cover; }
+            .vnoukovo-map { max-width: 400px; padding: 14px; }
+            .pin-board { gap: 12px; }
+            .pin-card { padding: 16px; }
+            .dossier-row { gap: 12px; }
+            .dossier-item { padding: 14px; }
+            .logo-3d { max-width: 200px; }
+            .logo-evolution { gap: 24px; }
+            .logo-evo-item img { max-width: 160px; padding: 14px; }
+            .evo-grid { gap: 12px; }
+            .evo-card { padding: 20px; }
+            .intro-photo { width: 140px; height: 140px; }
+        }
+
+        /* --- Mobile (max-width: 768px) --- */
         @media (max-width: 768px) {
             .scene { padding: 60px 20px 100px; }
+            .scene-title { font-size: clamp(24px, 6vw, 36px); }
+            .typewriter-text { font-size: 14px; line-height: 1.7; padding-left: 14px; border-left-width: 2px; }
             .data-grid { grid-template-columns: 1fr 1fr; }
             .pin-board { grid-template-columns: 1fr; }
             .evo-grid { grid-template-columns: 1fr; }
@@ -1160,10 +1233,14 @@
             .newspaper-page { width: 260px; }
             .archive-photo { max-width: 100%; max-height: 180px; }
             .vnoukovo-map { max-width: 100%; padding: 12px; }
+            .v-timeline { padding-left: 30px; }
             .logo-3d-wrap { margin: 16px 0; }
             .logo-3d { max-width: 200px; padding: 20px; }
-            .logo-evolution { gap: 20px; }
-            .logo-evo-item img { max-width: 140px; padding: 12px; }
+            .logo-evolution { flex-direction: column; gap: 16px; }
+            .logo-evo-item img { max-width: 160px; padding: 12px; }
+            .evo-arrow { transform: rotate(90deg); }
+            .intro-photo { width: 120px; height: 120px; }
+            .intro-headline { font-size: clamp(28px, 8vw, 48px); }
         }
         /* === ARCHIVE PHOTOS === */
         .archive-photo {
