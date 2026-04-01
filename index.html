@@ -416,9 +416,13 @@
             position: relative;
             z-index: 2;
             min-height: 100vh;
+            padding: 100px 60px 120px;
+        }
+
+        #scene-end {
             display: flex;
             align-items: center;
-            padding: 100px 60px 120px;
+            justify-content: center;
         }
 
         .scene-inner {
@@ -1170,6 +1174,7 @@
 
         /* --- Petits laptops (1366px de large) --- */
         @media (max-width: 1400px) {
+            .red-string-svg { opacity: 0.4; }
             .scene { padding: 80px 40px 100px; }
             .scene-title { font-size: clamp(28px, 4vw, 56px); }
             .typewriter-text { font-size: 15px; line-height: 1.8; }
@@ -1197,10 +1202,11 @@
 
         /* --- Très petits écrans en hauteur (laptops 768px de haut) --- */
         @media (max-height: 800px) {
-            .scene { padding: 70px 40px 80px; }
+            .red-string-svg { opacity: 0.3; }
+            .scene { padding: 80px 40px 80px; }
             .scene-title { font-size: clamp(24px, 3.5vw, 48px); }
             .scene-subtitle { font-size: clamp(12px, 1.3vw, 16px); margin-bottom: 24px; }
-            .typewriter-text { font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+            .typewriter-text { font-size: 13px; line-height: 1.6; margin-bottom: 20px; }
             .data-grid { gap: 12px; margin-top: 20px; }
             .data-card { padding: 16px; }
             .data-value { font-size: clamp(22px, 3vw, 32px); }
@@ -1211,13 +1217,16 @@
             .vnoukovo-map { max-width: 400px; padding: 14px; }
             .pin-board { gap: 12px; }
             .pin-card { padding: 16px; }
-            .dossier-row { gap: 12px; }
-            .dossier-item { padding: 14px; }
+            .pin-card p { font-size: 12px; }
+            .dossier-row { gap: 10px; }
+            .dossier-item { padding: 12px; min-width: 180px; }
+            .dossier-item p { font-size: 12px; }
             .logo-3d { max-width: 200px; }
-            .logo-evolution { gap: 24px; }
-            .logo-evo-item img { max-width: 160px; padding: 14px; }
+            .logo-evolution { gap: 16px; margin-top: 16px; }
+            .logo-evo-item img { max-width: 140px; padding: 10px; }
             .evo-grid { gap: 12px; }
             .evo-card { padding: 20px; }
+            .evo-card p { font-size: 12px; }
             .intro-photo { width: 140px; height: 140px; }
         }
 
