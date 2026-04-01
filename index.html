@@ -71,6 +71,48 @@
             z-index: 2;
         }
 
+        .intro-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center 15%;
+            border: 3px solid rgba(192,57,43,0.4);
+            box-shadow: 0 0 40px rgba(192,57,43,0.2), 0 0 80px rgba(0,0,0,0.5);
+            filter: grayscale(80%) contrast(1.1) sepia(20%);
+            margin-bottom: 24px;
+            opacity: 0;
+            position: relative;
+        }
+
+        .intro-photo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.4);
+            pointer-events: none;
+        }
+
+        .intro-photo-wrap {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 24px;
+        }
+
+        .intro-photo-wrap::after {
+            content: '1951 — 2014';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--typewriter);
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: var(--gray);
+            white-space: nowrap;
+        }
+
         .stamp {
             display: inline-block;
             border: 4px solid var(--red);
@@ -919,6 +961,87 @@
             animation: camera-shake 0.5s ease-out;
         }
 
+        /* Scene 4 - TV Static / Breaking News transition */
+        #tv-static-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1600;
+            pointer-events: none;
+            opacity: 0;
+            background: var(--bg);
+        }
+
+        #tv-static-overlay canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        .breaking-banner {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            transform: translateY(-50%);
+            z-index: 2;
+        }
+
+        .breaking-top {
+            background: var(--red);
+            color: white;
+            font-family: var(--typewriter);
+            font-size: clamp(12px, 1.5vw, 16px);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        .breaking-main {
+            background: rgba(12,12,20,0.92);
+            border-top: 3px solid var(--red);
+            border-bottom: 3px solid var(--red);
+            padding: 20px 40px;
+            text-align: center;
+        }
+
+        .breaking-main h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(20px, 3vw, 36px);
+            font-weight: 900;
+            color: var(--white);
+            line-height: 1.2;
+        }
+
+        .breaking-main p {
+            font-family: var(--typewriter);
+            font-size: 14px;
+            color: var(--red-light);
+            margin-top: 8px;
+            letter-spacing: 2px;
+        }
+
+        .breaking-ticker {
+            background: var(--red);
+            color: white;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 13px;
+            padding: 6px 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .breaking-ticker span {
+            display: inline-block;
+            animation: ticker-scroll 12s linear infinite;
+        }
+
+        @keyframes ticker-scroll {
+            0%   { transform: translateX(100vw); }
+            100% { transform: translateX(-200%); }
+        }
+
         /* Scene 6 - Page Turn */
         .scene[data-scene="6"] {
             perspective: 1200px;
@@ -942,6 +1065,9 @@
     <canvas id="intro-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
     <div class="intro-content">
         <div class="stamp" id="intro-stamp">CONFIDENTIEL</div><br>
+        <div class="intro-photo-wrap">
+            <img class="intro-photo" id="intro-photo" src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Christophe_de_Margerie.jpg" alt="Christophe de Margerie">
+        </div><br>
         <h1 class="intro-headline">Mort à <span style="color:var(--red)">Vnoukovo</span></h1>
         <p class="intro-sub">Enquête sur la disparition de Christophe de Margerie — 20 octobre 2014</p>
         <button class="intro-btn" onclick="startExperience()">Ouvrir le dossier</button>
@@ -994,6 +1120,21 @@
         <div class="np-header">Reuters &bull; October 21, 2014</div>
         <div class="np-title">Snowplow driver was drunk, say investigators</div>
         <div class="np-body">Russian investigators confirmed the driver of the snowplow that was struck by the Falcon 50 jet was intoxicated. The airport controller who cleared the plane for takeoff has also been detained for questioning.</div>
+    </div>
+</div>
+
+<!-- === TV STATIC / BREAKING NEWS (Scene 4 transition) === -->
+<div id="tv-static-overlay">
+    <canvas id="static-canvas"></canvas>
+    <div class="breaking-banner">
+        <div class="breaking-top">&#9679; BREAKING NEWS &#9679;</div>
+        <div class="breaking-main">
+            <h2>Le PDG de Total tué dans un crash à Moscou</h2>
+            <p>Aéroport de Vnoukovo — 20 octobre 2014, 23h57</p>
+        </div>
+        <div class="breaking-ticker">
+            <span>URGENT — Collision entre un Falcon 50 et un chasse-neige sur la piste — 4 morts dont Christophe de Margerie — Le conducteur du chasse-neige en état d'ivresse — Enquête ouverte —</span>
+        </div>
     </div>
 </div>
 
@@ -1342,9 +1483,10 @@ let started = false;
 
     // Stagger intro elements
     gsap.to('.stamp', { opacity: 1, duration: 0.6, delay: 0.3 });
-    gsap.to('.intro-headline', { opacity: 1, duration: 0.8, delay: 0.6 });
-    gsap.to('.intro-sub', { opacity: 1, duration: 0.8, delay: 1.0 });
-    gsap.to('.intro-btn', { opacity: 1, duration: 0.8, delay: 1.4 });
+    gsap.to('.intro-photo', { opacity: 1, duration: 1.2, delay: 0.5, ease: 'power2.out' });
+    gsap.to('.intro-headline', { opacity: 1, duration: 0.8, delay: 0.9 });
+    gsap.to('.intro-sub', { opacity: 1, duration: 0.8, delay: 1.3 });
+    gsap.to('.intro-btn', { opacity: 1, duration: 0.8, delay: 1.7 });
 })();
 
 // ================================================================
@@ -2016,26 +2158,66 @@ function initScrollAnims() {
         onEnter: () => gsap.to('#scroll-cta', { opacity: 0, duration: 0.4, onComplete: () => { document.getElementById('scroll-cta').style.display = 'none'; } })
     });
 
-    // Newspaper re-trigger between scene 3 and 4 (entering the accident)
+    // Breaking News TV transition before scene 4 (the accident)
     ScrollTrigger.create({
         trigger: '#scene-4',
         start: 'top 80%',
         once: true,
         onEnter: () => {
-            const layer = document.getElementById('newspaper-layer');
-            const pages = layer.querySelectorAll('.newspaper-page');
-            // Quick flash of newspapers
-            pages.forEach((p, i) => {
-                gsap.fromTo(p,
-                    { opacity: 0, y: -200, rotation: Math.random() * 20 - 10, scale: 0.7 },
-                    { opacity: 0.85, y: 0, rotation: Math.random() * 8 - 4, scale: 0.9, duration: 0.8, delay: i * 0.1, ease: 'power2.out' }
-                );
+            const overlay = document.getElementById('tv-static-overlay');
+            const canvas = document.getElementById('static-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+
+            // TV static noise
+            let staticRAF;
+            function drawStatic() {
+                const imageData = ctx.createImageData(canvas.width, canvas.height);
+                const data = imageData.data;
+                for (let i = 0; i < data.length; i += 4) {
+                    const v = Math.random() * 255;
+                    data[i] = v; data[i+1] = v; data[i+2] = v;
+                    data[i+3] = 80;
+                }
+                // Occasional scanline
+                for (let y = 0; y < canvas.height; y += 2) {
+                    if (Math.random() < 0.03) {
+                        for (let x = 0; x < canvas.width; x++) {
+                            const idx = (y * canvas.width + x) * 4;
+                            data[idx+3] = 160;
+                        }
+                    }
+                }
+                ctx.putImageData(imageData, 0, 0);
+                staticRAF = requestAnimationFrame(drawStatic);
+            }
+
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    cancelAnimationFrame(staticRAF);
+                    gsap.set(overlay, { opacity: 0 });
+                }
             });
-            gsap.delayedCall(2, () => {
-                pages.forEach((p, i) => {
-                    gsap.to(p, { opacity: 0, y: 200, duration: 0.6, delay: i * 0.08, ease: 'power2.in' });
-                });
-            });
+
+            // Phase 1: TV static flickers on
+            drawStatic();
+            tl.to(overlay, { opacity: 1, duration: 0.15 })
+              .to(overlay, { opacity: 0, duration: 0.05 }, 0.15)
+              .to(overlay, { opacity: 1, duration: 0.1 }, 0.25)
+              .to(overlay, { opacity: 0.3, duration: 0.05 }, 0.4)
+              .to(overlay, { opacity: 1, duration: 0.1 }, 0.5);
+
+            // Phase 2: Breaking news banner appears
+            tl.fromTo('.breaking-banner',
+                { opacity: 0, scaleX: 0 },
+                { opacity: 1, scaleX: 1, duration: 0.3, ease: 'power4.out' }, 0.7);
+
+            // Phase 3: Hold for reading
+            tl.to({}, { duration: 2.5 });
+
+            // Phase 4: Static flickers and fades out
+            tl.to(overlay, { opacity: 0, duration: 0.4, ease: 'power2.in' });
         }
     });
 }
