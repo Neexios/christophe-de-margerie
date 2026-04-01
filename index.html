@@ -1425,87 +1425,99 @@
         #surveillance-overlay .cam-corner.bl { bottom: 10px; left: 10px; border-bottom-width: 2px; border-left-width: 2px; }
         #surveillance-overlay .cam-corner.br { bottom: 10px; right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
 
-        /* === NETFLIX CHAPTER CARD OVERLAY === */
-        #netflix-card-overlay {
+        /* === FLASH PHOTO / PAPARAZZI OVERLAY === */
+        #flash-photo-overlay {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: 1600;
-            background: #0a0a0a;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+        }
+        #flash-photo-overlay .flash-white {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #fff;
+            opacity: 0;
+        }
+        #flash-photo-overlay .flash-title {
+            font-family: var(--typewriter);
+            font-size: clamp(22px, 4vw, 42px);
+            color: #fff;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        /* === BANDE ENREGISTREMENT / TEMOIGNAGE OVERLAY === */
+        #rec-tape-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1600;
+            background: #000;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            perspective: 1000px;
             opacity: 0;
             pointer-events: none;
         }
-        #netflix-card-overlay .chapter-num {
-            font-family: var(--typewriter);
-            font-size: 13px;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 20px;
-            opacity: 0;
-        }
-        #netflix-card-overlay .chapter-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(40px, 8vw, 90px);
-            font-weight: 900;
-            color: white;
-            transform: translateZ(-500px) rotateX(15deg);
-            opacity: 0;
-            text-align: center;
-        }
-        #netflix-card-overlay .chapter-line {
-            width: 0;
-            height: 3px;
-            background: var(--red);
-            margin-top: 20px;
-        }
-
-        /* === DOSSIER FLIP 3D OVERLAY === */
-        #dossier-flip-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1600;
+        #rec-tape-overlay .rec-indicator {
+            position: absolute;
+            top: 30px; left: 30px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            perspective: 1200px;
+            gap: 10px;
             opacity: 0;
-            pointer-events: none;
         }
-        #dossier-flip-overlay .flip-page {
-            width: 70vw;
-            max-width: 600px;
-            padding: 60px 50px;
-            background: var(--paper);
-            border: 1px solid var(--paper-dark);
-            box-shadow: 4px 6px 30px rgba(0,0,0,0.5);
-            text-align: center;
-            transform-origin: left center;
-            transform-style: preserve-3d;
+        #rec-tape-overlay .rec-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--red);
         }
-        #dossier-flip-overlay .flip-page .flip-label {
-            font-family: var(--typewriter);
-            font-size: 12px;
-            letter-spacing: 4px;
+        @keyframes rec-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+        #rec-tape-overlay .rec-dot.blinking {
+            animation: rec-blink 0.8s ease-in-out infinite;
+        }
+        #rec-tape-overlay .rec-label {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 14px;
+            font-weight: 700;
             color: var(--red);
-            text-transform: uppercase;
-            border: 2px solid var(--red);
-            display: inline-block;
-            padding: 4px 16px;
-            margin-bottom: 20px;
+            letter-spacing: 3px;
         }
-        #dossier-flip-overlay .flip-page .flip-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            font-weight: 900;
-            color: var(--ink);
-            line-height: 1.3;
+        #rec-tape-overlay .rec-timecode {
+            font-family: 'Source Code Pro', monospace;
+            font-size: clamp(32px, 6vw, 64px);
+            color: rgba(255,255,255,0.85);
+            letter-spacing: 4px;
+            opacity: 0;
+        }
+        #rec-tape-overlay .rec-banner {
+            position: absolute;
+            bottom: 60px; left: 0;
+            background: rgba(192,57,43,0.9);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(12px, 1.5vw, 16px);
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 10px 30px;
+            transform: translateX(-100%);
+            white-space: nowrap;
+            opacity: 0;
         }
 
         /* --- VNOUKOVO MINIMAP --- */
@@ -2094,19 +2106,20 @@
     <div class="cam-corner br"></div>
 </div>
 
-<!-- === NETFLIX CHAPTER CARD (scene 3->4 transition) === -->
-<div id="netflix-card-overlay">
-    <div class="chapter-num">CHAPITRE IV</div>
-    <div class="chapter-title">QUI PROFITE ?</div>
-    <div class="chapter-line"></div>
+<!-- === FLASH PHOTO / PAPARAZZI (scene 3->4 transition) === -->
+<div id="flash-photo-overlay">
+    <div class="flash-white"></div>
+    <div class="flash-title"></div>
 </div>
 
-<!-- === DOSSIER FLIP 3D (scene 4->5 transition) === -->
-<div id="dossier-flip-overlay">
-    <div class="flip-page">
-        <div class="flip-label">Confidentiel &mdash; Partie V</div>
-        <div class="flip-title">GUERRE DE<br>L'INFORMATION</div>
+<!-- === BANDE ENREGISTREMENT / TEMOIGNAGE (scene 4->5 transition) === -->
+<div id="rec-tape-overlay">
+    <div class="rec-indicator">
+        <div class="rec-dot"></div>
+        <span class="rec-label">REC</span>
     </div>
+    <div class="rec-timecode">00:00:00:00</div>
+    <div class="rec-banner">T&Eacute;MOIGNAGE &mdash; PARTIE CLASSIFI&Eacute;E</div>
 </div>
 
 <script>
@@ -3465,14 +3478,14 @@ function initProgressBar() {
 })();
 
 // ================================================================
-// TRANSITION B: NETFLIX CHAPTER CARD (between scene 3 and 4)
+// TRANSITION B: FLASH PHOTO / PAPARAZZI (between scene 3 and 4)
 // ================================================================
-(function initNetflixCard() {
-    var overlay = document.getElementById('netflix-card-overlay');
+(function initFlashPhoto() {
+    var overlay = document.getElementById('flash-photo-overlay');
     if (!overlay) return;
-    var chapterNum = overlay.querySelector('.chapter-num');
-    var chapterTitle = overlay.querySelector('.chapter-title');
-    var chapterLine = overlay.querySelector('.chapter-line');
+    var flashWhite = overlay.querySelector('.flash-white');
+    var flashTitle = overlay.querySelector('.flash-title');
+    var titleText = 'QUI AVAIT INT\u00c9R\u00caT ?';
 
     function setup() {
         if (!started) { setTimeout(setup, 300); return; }
@@ -3482,26 +3495,39 @@ function initProgressBar() {
             once: true,
             onEnter: function() {
                 var tl = gsap.timeline();
-                // Show overlay
-                tl.to(overlay, { opacity: 1, duration: 0.3, ease: 'power2.out' });
-                // Fade in chapter number
-                tl.to(chapterNum, { opacity: 1, duration: 0.5, ease: 'power2.out' }, 0.2);
-                // 3D title flies in from depth
-                tl.to(chapterTitle, {
-                    opacity: 1,
-                    translateZ: 0,
-                    rotateX: 0,
-                    duration: 1.0,
-                    ease: 'power3.out'
-                }, 0.4);
-                // Red line draws under title
-                tl.to(chapterLine, { width: 200, duration: 0.6, ease: 'power2.inOut' }, 0.8);
-                // Hold, then fade everything out
-                tl.to(overlay, { opacity: 0, duration: 0.5, ease: 'power2.in' }, '+=0.8');
-                // Reset transforms for potential re-use
-                tl.set(chapterTitle, { translateZ: -500, rotateX: 15, opacity: 0 });
-                tl.set(chapterNum, { opacity: 0 });
-                tl.set(chapterLine, { width: 0 });
+                // Show overlay (black)
+                tl.to(overlay, { opacity: 1, duration: 0.05 });
+
+                // 4 rapid camera flashes
+                for (var i = 0; i < 4; i++) {
+                    tl.to(flashWhite, { opacity: 1, duration: 0.06 }, '+=' + (i === 0 ? 0.1 : 0.15));
+                    tl.to(flashWhite, { opacity: 0, duration: 0.08 });
+                }
+
+                // Brief pause after flashes
+                tl.addLabel('typewriter', '+=0.3');
+
+                // Typewriter effect: letters appear one by one
+                tl.set(flashTitle, { opacity: 1 }, 'typewriter');
+                tl.call(function() {
+                    var el = flashTitle;
+                    el.textContent = '';
+                    var idx = 0;
+                    var interval = setInterval(function() {
+                        if (idx < titleText.length) {
+                            el.textContent += titleText[idx];
+                            idx++;
+                        } else {
+                            clearInterval(interval);
+                        }
+                    }, 45);
+                }, null, 'typewriter');
+
+                // Hold title for 1.5s then fade out
+                tl.to(overlay, { opacity: 0, duration: 0.4, ease: 'power2.in' }, 'typewriter+=' + (titleText.length * 0.045 + 1.5));
+                // Reset
+                tl.set(flashTitle, { opacity: 0 });
+                tl.call(function() { flashTitle.textContent = ''; });
             }
         });
     }
@@ -3509,12 +3535,15 @@ function initProgressBar() {
 })();
 
 // ================================================================
-// TRANSITION C: DOSSIER FLIP 3D (between scene 4 and 5)
+// TRANSITION C: BANDE ENREGISTREMENT / TEMOIGNAGE (between scene 4 and 5)
 // ================================================================
-(function initDossierFlip() {
-    var overlay = document.getElementById('dossier-flip-overlay');
+(function initRecTape() {
+    var overlay = document.getElementById('rec-tape-overlay');
     if (!overlay) return;
-    var flipPage = overlay.querySelector('.flip-page');
+    var recIndicator = overlay.querySelector('.rec-indicator');
+    var recDot = overlay.querySelector('.rec-dot');
+    var timecodeEl = overlay.querySelector('.rec-timecode');
+    var banner = overlay.querySelector('.rec-banner');
 
     function setup() {
         if (!started) { setTimeout(setup, 300); return; }
@@ -3524,20 +3553,51 @@ function initProgressBar() {
             once: true,
             onEnter: function() {
                 var tl = gsap.timeline();
-                // Show overlay with page visible
-                tl.set(overlay, { opacity: 1 });
-                tl.set(flipPage, { rotateY: 0, opacity: 1 });
-                // Hold briefly so user sees the page
-                tl.addLabel('flip', '+=0.3');
-                // Page flips away in 3D
-                tl.to(flipPage, {
-                    rotateY: -180,
-                    opacity: 0,
-                    duration: 1.2,
-                    ease: 'power2.inOut'
-                }, 'flip');
-                // Hide overlay after flip
-                tl.set(overlay, { opacity: 0 }, '+=0.1');
+                var timecodeInterval;
+
+                // Show overlay
+                tl.to(overlay, { opacity: 1, duration: 0.15 });
+
+                // REC indicator appears + blinking dot
+                tl.to(recIndicator, { opacity: 1, duration: 0.2 }, 0.1);
+                tl.call(function() { recDot.classList.add('blinking'); }, null, 0.1);
+
+                // Timecode starts rolling
+                tl.to(timecodeEl, { opacity: 1, duration: 0.15 }, 0.2);
+                tl.call(function() {
+                    var frame = 0;
+                    timecodeInterval = setInterval(function() {
+                        frame += 7; // fast increment
+                        var totalFrames = frame;
+                        var f = totalFrames % 25;
+                        var totalSecs = Math.floor(totalFrames / 25);
+                        var s = totalSecs % 60;
+                        var totalMins = Math.floor(totalSecs / 60);
+                        var m = totalMins % 60;
+                        var h = Math.floor(totalMins / 60);
+                        timecodeEl.textContent =
+                            String(h).padStart(2, '0') + ':' +
+                            String(m).padStart(2, '0') + ':' +
+                            String(s).padStart(2, '0') + ':' +
+                            String(f).padStart(2, '0');
+                    }, 30);
+                }, null, 0.2);
+
+                // Banner slides in from left
+                tl.to(banner, { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, 0.5);
+
+                // Hold for 2s then fade out
+                tl.to(overlay, { opacity: 0, duration: 0.4, ease: 'power2.in' }, '+=2');
+                tl.call(function() {
+                    clearInterval(timecodeInterval);
+                    recDot.classList.remove('blinking');
+                });
+
+                // Reset
+                tl.set(recIndicator, { opacity: 0 });
+                tl.set(timecodeEl, { opacity: 0 });
+                tl.set(banner, { opacity: 0, x: '-100%' });
+                tl.call(function() { timecodeEl.textContent = '00:00:00:00'; });
             }
         });
     }
