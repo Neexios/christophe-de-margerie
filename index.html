@@ -1,0 +1,2073 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENQUÊTE — Christophe de Margerie</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@300;400;600;700;900&family=Playfair+Display:wght@700;900&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0c0c14;
+            --paper: #f5f0e8;
+            --paper-dark: #d4c9b4;
+            --gold: #d4a84b;
+            --red: #c0392b;
+            --red-light: #e74c3c;
+            --blue-dark: #1a1a2e;
+            --white: #f1faee;
+            --gray: #6a6a7a;
+            --ink: #2c2c2c;
+            --typewriter: 'Special Elite', 'Courier New', monospace;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* --- GRAIN OVERLAY --- */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        canvas#bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        /* === INTRO === */
+        #intro {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 2000;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .intro-content {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stamp {
+            display: inline-block;
+            border: 4px solid var(--red);
+            color: var(--red);
+            font-family: var(--typewriter);
+            font-size: clamp(14px, 2vw, 20px);
+            padding: 8px 24px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            transform: rotate(-5deg);
+            opacity: 0;
+            margin-bottom: 30px;
+        }
+
+        .intro-headline {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(42px, 7vw, 90px);
+            font-weight: 900;
+            line-height: 1.05;
+            margin-bottom: 16px;
+            opacity: 0;
+        }
+
+        .intro-sub {
+            font-family: var(--typewriter);
+            font-size: clamp(14px, 1.5vw, 18px);
+            color: var(--gray);
+            margin-bottom: 50px;
+            opacity: 0;
+        }
+
+        .intro-btn {
+            font-family: var(--typewriter);
+            font-size: 14px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            padding: 14px 50px;
+            border: 1px solid var(--red);
+            color: var(--red);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0;
+        }
+
+        .intro-btn:hover {
+            background: var(--red);
+            color: var(--white);
+        }
+
+        /* === NEWSPAPER TRANSITIONS === */
+        .newspaper-transition {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1500;
+            pointer-events: none;
+            perspective: 1000px;
+        }
+
+        .newspaper-page {
+            position: absolute;
+            width: 350px;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--typewriter);
+            padding: 30px 24px;
+            border: 1px solid var(--paper-dark);
+            box-shadow: 2px 4px 20px rgba(0,0,0,0.5);
+            opacity: 0;
+            transform-origin: center center;
+        }
+
+        .newspaper-page .np-header {
+            text-align: center;
+            border-bottom: 2px solid var(--ink);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #666;
+        }
+
+        .newspaper-page .np-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--ink);
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .newspaper-page .np-body {
+            font-size: 11px;
+            line-height: 1.6;
+            color: #444;
+            column-count: 2;
+            column-gap: 16px;
+        }
+
+        .newspaper-page .np-stamp {
+            position: absolute;
+            top: 20px; right: 20px;
+            border: 3px solid var(--red);
+            color: var(--red);
+            font-size: 11px;
+            padding: 4px 10px;
+            letter-spacing: 2px;
+            transform: rotate(12deg);
+            font-weight: 700;
+        }
+
+        /* === DOSSIER OVERLAY === */
+        #dossier-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            perspective: 1200px;
+            opacity: 0;
+        }
+
+        .dossier-folder {
+            position: relative;
+            width: 480px;
+            height: 620px;
+            transform-style: preserve-3d;
+        }
+
+        .dossier-cover {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #d4b978 0%, var(--paper-dark) 40%, #c4b48a 100%);
+            border-radius: 4px;
+            box-shadow: 4px 6px 30px rgba(0,0,0,0.6), inset 0 0 40px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backface-visibility: hidden;
+            transform-origin: left center;
+            border: 1px solid #b8a67a;
+        }
+
+        .dossier-cover::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .dossier-cover-left,
+        .dossier-cover-right {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, #d4b978 0%, var(--paper-dark) 40%, #c4b48a 100%);
+            box-shadow: 4px 6px 30px rgba(0,0,0,0.6), inset 0 0 40px rgba(0,0,0,0.08);
+            border: 1px solid #b8a67a;
+            backface-visibility: hidden;
+        }
+
+        .dossier-cover-left {
+            left: 0;
+            border-radius: 4px 0 0 4px;
+            transform-origin: left center;
+        }
+
+        .dossier-cover-right {
+            right: 0;
+            border-radius: 0 4px 4px 0;
+            transform-origin: right center;
+        }
+
+        .dossier-label {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .dossier-label .dossier-number {
+            font-family: var(--typewriter);
+            font-size: 22px;
+            color: var(--ink);
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            opacity: 0.85;
+        }
+
+        .dossier-label .dossier-stamp {
+            display: inline-block;
+            border: 4px solid var(--red);
+            color: var(--red);
+            font-family: var(--typewriter);
+            font-size: 18px;
+            font-weight: 700;
+            padding: 8px 28px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            transform: rotate(-4deg);
+        }
+
+        .dossier-tab {
+            position: absolute;
+            top: -18px;
+            right: 60px;
+            width: 120px;
+            height: 28px;
+            background: #c4b48a;
+            border-radius: 6px 6px 0 0;
+            border: 1px solid #b8a67a;
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--typewriter);
+            font-size: 10px;
+            color: var(--ink);
+            letter-spacing: 2px;
+        }
+
+        .dossier-inner {
+            position: absolute;
+            top: 10px; left: 10px;
+            width: calc(100% - 20px);
+            height: calc(100% - 20px);
+            background: var(--paper);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+        }
+
+        .dossier-inner-text {
+            font-family: var(--typewriter);
+            font-size: 14px;
+            color: var(--gray);
+            text-align: center;
+            line-height: 2;
+            letter-spacing: 1px;
+        }
+
+        /* === RED STRING === */
+        .red-string-svg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .red-string-svg path {
+            stroke: var(--red);
+            stroke-width: 1.5;
+            fill: none;
+            opacity: 0;
+            filter: url(#string-glow);
+        }
+
+        .red-string-svg .string-pin {
+            fill: var(--red);
+            filter: drop-shadow(0 0 4px rgba(192,57,43,0.6));
+        }
+
+        .red-string-svg .pin-hole {
+            fill: var(--bg);
+        }
+
+        @keyframes string-vibrate {
+            0%   { transform: translate(0, 0); }
+            20%  { transform: translate(0.3px, -0.4px); }
+            40%  { transform: translate(-0.2px, 0.3px); }
+            60%  { transform: translate(0.4px, 0.2px); }
+            80%  { transform: translate(-0.3px, -0.2px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .red-string-svg .string-group.visible {
+            animation: string-vibrate 3s ease-in-out infinite;
+        }
+
+        .red-string-svg .string-group:nth-child(2).visible { animation-delay: -0.5s; animation-duration: 3.4s; }
+        .red-string-svg .string-group:nth-child(3).visible { animation-delay: -1.1s; animation-duration: 2.8s; }
+        .red-string-svg .string-group:nth-child(4).visible { animation-delay: -0.3s; animation-duration: 3.2s; }
+        .red-string-svg .string-group:nth-child(5).visible { animation-delay: -0.8s; animation-duration: 3.6s; }
+
+        /* === SCENES === */
+        .scene {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 100px 60px 120px;
+        }
+
+        .scene-inner {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        /* Evidence tag */
+        .evidence-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--typewriter);
+            font-size: 11px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--red);
+            margin-bottom: 16px;
+            border: 1px solid rgba(192,57,43,0.3);
+            padding: 6px 16px;
+            background: rgba(192,57,43,0.05);
+        }
+
+        .evidence-tag::before {
+            content: '';
+            width: 8px; height: 8px;
+            background: var(--red);
+            border-radius: 50%;
+            animation: pulse-dot 2s ease infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(192,57,43,0.4); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 8px rgba(192,57,43,0); }
+        }
+
+        .scene-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 5vw, 72px);
+            font-weight: 900;
+            line-height: 1.08;
+            margin-bottom: 8px;
+        }
+
+        .scene-subtitle {
+            font-family: var(--typewriter);
+            font-size: clamp(14px, 1.5vw, 18px);
+            color: var(--gray);
+            margin-bottom: 40px;
+        }
+
+        /* Typewriter text */
+        .typewriter-text {
+            font-family: var(--typewriter);
+            font-size: 16px;
+            line-height: 2;
+            color: rgba(241,250,238,0.85);
+            max-width: 720px;
+            margin-bottom: 40px;
+            border-left: 3px solid var(--red);
+            padding-left: 20px;
+        }
+
+        .typewriter-text .tw-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--red);
+            margin-left: 2px;
+            animation: blink-cursor 0.8s steps(1) infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink-cursor { 50% { opacity: 0; } }
+
+        .highlight { color: var(--gold); }
+        .highlight-red { color: var(--red-light); font-weight: 600; }
+
+        /* === DATA CARDS === */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .data-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px; height: 100%;
+            background: var(--gold);
+        }
+
+        .data-card.red-accent::before { background: var(--red); }
+
+        .data-card:hover { border-color: rgba(212,168,75,0.3); }
+
+        .data-value {
+            font-family: 'Source Code Pro', monospace;
+            font-size: clamp(28px, 3.5vw, 44px);
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .data-value.red { color: var(--red-light); }
+
+        .data-label {
+            font-family: var(--typewriter);
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gray);
+            margin-top: 6px;
+        }
+
+        /* === DOSSIER PHOTOS === */
+        .dossier-row {
+            display: flex;
+            gap: 24px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .dossier-item {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(245,240,232,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 20px;
+            position: relative;
+        }
+
+        .dossier-item .pin {
+            position: absolute;
+            top: -6px; left: 20px;
+            width: 12px; height: 12px;
+            background: var(--red);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(192,57,43,0.5);
+        }
+
+        .dossier-item h4 {
+            font-family: var(--typewriter);
+            font-size: 14px;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .dossier-item p {
+            font-size: 13px;
+            color: var(--gray);
+            line-height: 1.7;
+        }
+
+        /* === TIMELINE VERTICAL (Investigation style) === */
+        .v-timeline {
+            position: relative;
+            padding-left: 40px;
+            margin-top: 30px;
+        }
+
+        .v-timeline::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 15px;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--red), rgba(192,57,43,0.1));
+        }
+
+        .v-tl-item {
+            position: relative;
+            padding: 0 0 30px 20px;
+        }
+
+        .v-tl-item::before {
+            content: '';
+            position: absolute;
+            left: -32px; top: 4px;
+            width: 12px; height: 12px;
+            background: var(--bg);
+            border: 2px solid var(--red);
+            border-radius: 50%;
+        }
+
+        .v-tl-item.critical::before {
+            background: var(--red);
+            box-shadow: 0 0 12px rgba(192,57,43,0.6);
+        }
+
+        .v-tl-time {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 12px;
+            color: var(--red-light);
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .v-tl-text {
+            font-family: var(--typewriter);
+            font-size: 14px;
+            color: rgba(241,250,238,0.75);
+            margin-top: 4px;
+            line-height: 1.6;
+        }
+
+        /* === CAUSE BOARD (Pin Board) === */
+        .pin-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .pin-card {
+            background: rgba(245,240,232,0.06);
+            border: 1px solid rgba(192,57,43,0.2);
+            padding: 24px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .pin-card::after {
+            content: '';
+            position: absolute;
+            top: -1px; right: -1px; bottom: -1px; left: -1px;
+            border: 1px solid var(--red);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .pin-card:hover::after { opacity: 1; }
+
+        .pin-card:hover { transform: translateY(-4px); background: rgba(245,240,232,0.08); }
+
+        .pin-card .pin {
+            position: absolute;
+            top: -6px; right: 16px;
+            width: 12px; height: 12px;
+            background: var(--red);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(192,57,43,0.5);
+        }
+
+        .pin-card h4 {
+            font-family: var(--typewriter);
+            font-size: 13px;
+            color: var(--red-light);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pin-card p {
+            font-size: 13px;
+            color: var(--gray);
+            line-height: 1.7;
+        }
+
+        .pin-card .verdict {
+            margin-top: 10px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 12px;
+            color: var(--red-light);
+            border-top: 1px solid rgba(192,57,43,0.2);
+            padding-top: 10px;
+        }
+
+        /* === EVOLUTION CARDS === */
+        .evo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .evo-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 28px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .evo-card:hover { border-color: rgba(212,168,75,0.3); transform: translateY(-3px); }
+
+        .evo-card .evo-year {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 12px;
+            color: var(--gold);
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .evo-card h4 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .evo-card p {
+            font-size: 13px;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        /* === GLOBE LABELS === */
+        .globe-label {
+            position: absolute;
+            font-family: var(--typewriter);
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gold);
+            pointer-events: none;
+            white-space: nowrap;
+            text-shadow: 0 0 10px rgba(212,168,75,0.5);
+        }
+
+        .globe-label::before {
+            content: '';
+            display: inline-block;
+            width: 6px; height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+            box-shadow: 0 0 8px var(--gold);
+        }
+
+        .globe-label.red { color: var(--red-light); }
+        .globe-label.red::before { background: var(--red); box-shadow: 0 0 8px var(--red); }
+
+        /* === QUOTE === */
+        .final-quote {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .final-quote blockquote {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(24px, 3.5vw, 44px);
+            font-weight: 700;
+            line-height: 1.3;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .final-quote cite {
+            font-family: var(--typewriter);
+            font-size: 14px;
+            color: var(--gray);
+            font-style: normal;
+        }
+
+        .case-closed {
+            display: inline-block;
+            border: 4px solid var(--red);
+            color: var(--red);
+            font-family: var(--typewriter);
+            font-size: 18px;
+            padding: 10px 30px;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            transform: rotate(-3deg);
+            margin-top: 50px;
+            opacity: 0;
+        }
+
+        /* === PROGRESS BAR === */
+        #progress-bar {
+            position: fixed;
+            bottom: 0; left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(12,12,20,0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(192,57,43,0.2);
+            display: flex;
+            align-items: center;
+            height: 52px;
+            padding: 0 24px;
+        }
+
+        .prog-track {
+            flex: 1;
+            height: 2px;
+            background: rgba(255,255,255,0.06);
+            position: relative;
+        }
+
+        .prog-fill {
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--red), var(--gold));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .prog-dots {
+            position: absolute;
+            top: 50%; left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .prog-dot-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .prog-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.15);
+            transition: all 0.4s;
+        }
+
+        .prog-dot.active {
+            background: var(--red);
+            border-color: var(--red);
+            box-shadow: 0 0 12px rgba(192,57,43,0.6);
+        }
+
+        .prog-label {
+            position: absolute;
+            bottom: 18px;
+            white-space: nowrap;
+            font-family: var(--typewriter);
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gray);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .prog-dot-wrap:hover .prog-label,
+        .prog-dot-wrap.active .prog-label { opacity: 1; }
+        .prog-dot-wrap.active .prog-label { color: var(--red-light); }
+
+        /* === SCROLL CTA === */
+        #scroll-cta {
+            position: fixed;
+            bottom: 72px; left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        #scroll-cta span {
+            font-family: var(--typewriter);
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gray);
+        }
+
+        #scroll-cta .scroll-line {
+            width: 1px; height: 40px;
+            background: linear-gradient(to bottom, var(--red), transparent);
+            animation: scroll-pulse 2s ease infinite;
+        }
+
+        @keyframes scroll-pulse {
+            0%, 100% { opacity: 1; transform: scaleY(1); }
+            50% { opacity: 0.3; transform: scaleY(0.6); }
+        }
+
+        /* === SCENE TRANSITION EFFECTS === */
+
+        /* Scene 3 - Iron Curtain */
+        .iron-curtain {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(192, 57, 43, 0.45);
+            z-index: 10;
+            pointer-events: none;
+            transform-origin: top center;
+        }
+
+        /* Scene 4 - Flash & Camera Shake */
+        .flash-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: white;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        @keyframes camera-shake {
+            0%   { transform: translate(0, 0); }
+            10%  { transform: translate(-8px, 4px); }
+            20%  { transform: translate(6px, -6px); }
+            30%  { transform: translate(-4px, 8px); }
+            40%  { transform: translate(8px, -2px); }
+            50%  { transform: translate(-6px, -4px); }
+            60%  { transform: translate(4px, 6px); }
+            70%  { transform: translate(-2px, -8px); }
+            80%  { transform: translate(6px, 2px); }
+            90%  { transform: translate(-4px, 4px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .shake-active {
+            animation: camera-shake 0.5s ease-out;
+        }
+
+        /* Scene 6 - Page Turn */
+        .scene[data-scene="6"] {
+            perspective: 1200px;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .scene { padding: 60px 20px 100px; }
+            .data-grid { grid-template-columns: 1fr 1fr; }
+            .pin-board { grid-template-columns: 1fr; }
+            .evo-grid { grid-template-columns: 1fr; }
+            .dossier-row { flex-direction: column; }
+            .newspaper-page { width: 260px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- === INTRO === -->
+<div id="intro">
+    <canvas id="intro-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
+    <div class="intro-content">
+        <div class="stamp" id="intro-stamp">CONFIDENTIEL</div><br>
+        <h1 class="intro-headline">Mort à <span style="color:var(--red)">Vnoukovo</span></h1>
+        <p class="intro-sub">Enquête sur la disparition de Christophe de Margerie — 20 octobre 2014</p>
+        <button class="intro-btn" onclick="startExperience()">Ouvrir le dossier</button>
+    </div>
+</div>
+
+<!-- === DOSSIER OVERLAY === -->
+<div id="dossier-overlay">
+    <div class="dossier-folder">
+        <div class="dossier-tab">TOTAL S.A.</div>
+        <div class="dossier-cover" id="dossier-cover-full">
+            <div class="dossier-label">
+                <div class="dossier-number">DOSSIER N&#176;2014-1020</div>
+                <div class="dossier-stamp">CONFIDENTIEL</div>
+            </div>
+        </div>
+        <div class="dossier-cover-left" id="dossier-left"></div>
+        <div class="dossier-cover-right" id="dossier-right"></div>
+        <div class="dossier-inner" id="dossier-inner">
+            <div class="dossier-inner-text">
+                OBJET : Accident a&eacute;rien — Vnoukovo<br>
+                VICTIME : Christophe de Margerie<br>
+                DATE : 20 octobre 2014<br>
+                STATUT : Enqu&ecirc;te ouverte
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- === NEWSPAPER TRANSITION CONTAINER === -->
+<div class="newspaper-transition" id="newspaper-layer">
+    <div class="newspaper-page" id="np1" style="top:10%;left:5%;">
+        <div class="np-stamp">FLASH</div>
+        <div class="np-header">Le Monde &bull; 21 octobre 2014</div>
+        <div class="np-title">Le PDG de Total meurt dans un accident d'avion à Moscou</div>
+        <div class="np-body">Christophe de Margerie, patron emblématique du géant pétrolier français Total, est décédé dans la nuit du 20 au 21 octobre dans un accident d'avion à l'aéroport de Vnoukovo. Son Falcon 50 a percuté un chasse-neige lors de la phase de décollage.</div>
+    </div>
+    <div class="newspaper-page" id="np2" style="top:20%;right:8%;">
+        <div class="np-header">Financial Times &bull; October 21, 2014</div>
+        <div class="np-title">Total CEO killed in Moscow plane crash</div>
+        <div class="np-body">Christophe de Margerie, the charismatic head of France's biggest company, died when his private jet collided with a snowplow at Moscow's Vnukovo airport. The crash raises questions about airport safety in Russia.</div>
+    </div>
+    <div class="newspaper-page" id="np3" style="bottom:15%;left:15%;">
+        <div class="np-stamp">URGENT</div>
+        <div class="np-header">Les Échos &bull; 21 octobre 2014</div>
+        <div class="np-title">Disparition de Christophe de Margerie : le monde des affaires sous le choc</div>
+        <div class="np-body">L'annonce du décès du PDG de Total a provoqué une onde de choc dans les milieux économiques et politiques. François Hollande a salué un « grand capitaine d'industrie ».</div>
+    </div>
+    <div class="newspaper-page" id="np4" style="bottom:10%;right:12%;">
+        <div class="np-header">Reuters &bull; October 21, 2014</div>
+        <div class="np-title">Snowplow driver was drunk, say investigators</div>
+        <div class="np-body">Russian investigators confirmed the driver of the snowplow that was struck by the Falcon 50 jet was intoxicated. The airport controller who cleared the plane for takeoff has also been detained for questioning.</div>
+    </div>
+</div>
+
+<!-- === RED STRING SVG (dynamically populated) === -->
+<svg class="red-string-svg" id="red-strings" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <filter id="string-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1.5" result="blur"/>
+            <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+</svg>
+
+<!-- === BACKGROUND 3D === -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- === SCROLL CTA === -->
+<div id="scroll-cta">
+    <span>Enquêter</span>
+    <div class="scroll-line"></div>
+</div>
+
+<!-- ==================== SCENE 1 ==================== -->
+<section class="scene" id="scene-1" data-scene="1">
+    <div class="scene-inner">
+        <div class="evidence-tag">Pièce A-1 &mdash; Le sujet</div>
+        <h2 class="scene-title">"Big Moustache"</h2>
+        <div class="scene-subtitle">L'ascension d'un patron hors norme</div>
+        <div class="typewriter-text" id="tw-1">
+            Entré chez Total en <span class="highlight">1974</span> comme simple cadre commercial, Christophe de Margerie gravit un à un les échelons du géant pétrolier. Nommé PDG en <span class="highlight">2007</span>, il impose un style direct et un sens politique rare dans le milieu feutré de l'énergie. Sous sa direction, Total s'implante dans <span class="highlight">130 pays</span> et devient la 4e major mondiale.<span class="tw-cursor"></span>
+        </div>
+        <div class="data-grid">
+            <div class="data-card">
+                <div class="data-value" data-target="1974">0</div>
+                <div class="data-label">Entrée chez Total</div>
+            </div>
+            <div class="data-card">
+                <div class="data-value" data-target="130">0</div>
+                <div class="data-label">Pays d'implantation</div>
+            </div>
+            <div class="data-card">
+                <div class="data-value" data-target="236" data-suffix=" Mrd$">0</div>
+                <div class="data-label">Chiffre d'affaires 2013</div>
+            </div>
+            <div class="data-card">
+                <div class="data-value" data-target="2.3" data-decimal="true" data-suffix="M bbl/j">0</div>
+                <div class="data-label">Production pétrolière</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== SCENE 2 ==================== -->
+<section class="scene" id="scene-2" data-scene="2">
+    <div class="scene-inner">
+        <div class="evidence-tag">Pièce A-2 &mdash; Le contexte</div>
+        <h2 class="scene-title">Total & la <span style="color:var(--red-light)">Russie</span></h2>
+        <div class="scene-subtitle">Le pari stratégique de l'Est — Paris ↔ Moscou</div>
+        <div class="typewriter-text">
+            Sous l'impulsion de de Margerie, Total devient le <span class="highlight">premier investisseur étranger</span> dans l'énergie russe. Le groupe détient <span class="highlight">18%</span> de Novatek et participe au projet arctique <span class="highlight">Yamal LNG</span> — 27 milliards de dollars. De Margerie entretient un lien direct avec le Kremlin, convaincu que le dialogue est la seule voie.<span class="tw-cursor"></span>
+        </div>
+        <div class="dossier-row">
+            <div class="dossier-item">
+                <div class="pin"></div>
+                <h4>Novatek</h4>
+                <p>2e producteur de gaz russe. Total détient 18% — un investissement stratégique de plusieurs milliards, contre l'avis de Washington.</p>
+            </div>
+            <div class="dossier-item">
+                <div class="pin"></div>
+                <h4>Yamal LNG</h4>
+                <p>Méga-projet en Arctique russe. 16.5 Mt/an de gaz naturel liquéfié. Total détient 20% aux côtés de Novatek et CNPC.</p>
+            </div>
+            <div class="dossier-item">
+                <div class="pin"></div>
+                <h4>Le Kremlin</h4>
+                <p>De Margerie rencontre régulièrement Poutine et Medvedev. Il est l'un des rares patrons occidentaux à maintenir ce canal.</p>
+            </div>
+        </div>
+        <div class="data-grid" style="margin-top:24px;">
+            <div class="data-card">
+                <div class="data-value" data-target="18" data-suffix="%">0</div>
+                <div class="data-label">Part dans Novatek</div>
+            </div>
+            <div class="data-card">
+                <div class="data-value" data-target="27" data-suffix=" Mrd$">0</div>
+                <div class="data-label">Projet Yamal</div>
+            </div>
+            <div class="data-card">
+                <div class="data-value" data-target="16.5" data-decimal="true" data-suffix=" Mt/an">0</div>
+                <div class="data-label">Capacité GNL</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== SCENE 3 ==================== -->
+<section class="scene" id="scene-3" data-scene="3">
+    <div class="scene-inner">
+        <div class="evidence-tag">Pièce A-3 &mdash; Les tensions</div>
+        <h2 class="scene-title">Crimée <span style="color:var(--red)">2014</span></h2>
+        <div class="scene-subtitle">Quand les sanctions montent, de Margerie maintient le pont</div>
+        <div class="typewriter-text">
+            Mars 2014 : la Russie annexe la Crimée. L'Occident impose des <span class="highlight-red">sanctions économiques</span> croissantes. Les majors américaines reculent. De Margerie, lui, défie la pression : <em>"On ne règle pas les problèmes du monde en isolant les gens."</em> Il sera le dernier grand patron occidental à maintenir le dialogue avec Moscou.<span class="tw-cursor"></span>
+        </div>
+        <div class="v-timeline">
+            <div class="v-tl-item critical">
+                <div class="v-tl-time">MARS 2014</div>
+                <div class="v-tl-text">Annexion de la Crimée — la communauté internationale condamne</div>
+            </div>
+            <div class="v-tl-item">
+                <div class="v-tl-time">AVRIL 2014</div>
+                <div class="v-tl-text">Premières sanctions UE/USA ciblant des oligarques et officiels russes</div>
+            </div>
+            <div class="v-tl-item critical">
+                <div class="v-tl-time">17 JUILLET 2014</div>
+                <div class="v-tl-text">Vol MH17 abattu au-dessus de l'Ukraine — 298 morts. Sanctions renforcées (secteur énergétique)</div>
+            </div>
+            <div class="v-tl-item">
+                <div class="v-tl-time">SEPTEMBRE 2014</div>
+                <div class="v-tl-text">De Margerie au forum de Vladivostok : "Total ne quittera pas la Russie"</div>
+            </div>
+            <div class="v-tl-item critical">
+                <div class="v-tl-time">20 OCTOBRE 2014</div>
+                <div class="v-tl-text">Dernier voyage — dîner avec le Premier ministre Medvedev à Moscou</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== SCENE 4 ==================== -->
+<section class="scene" id="scene-4" data-scene="4">
+    <div class="scene-inner">
+        <div class="evidence-tag" style="border-color:var(--red);background:rgba(192,57,43,0.15);">Pièce B-1 &mdash; L'accident</div>
+        <h2 class="scene-title" style="color:var(--red)">20 octobre 2014</h2>
+        <div class="scene-subtitle">23h57 — Piste 06, Aéroport de Vnoukovo, Moscou</div>
+        <div class="typewriter-text" style="border-color:var(--red);">
+            Après un dîner officiel avec <span class="highlight">Dmitri Medvedev</span>, Christophe de Margerie rejoint le terminal VIP de Vnoukovo-3. Son <span class="highlight">Dassault Falcon 50</span> reçoit l'autorisation de décoller. Visibilité : <span class="highlight-red">350 mètres</span>. Brouillard givrant. Sur la piste, un chasse-neige conduit par un homme en état d'ébriété. L'avion le percute à pleine vitesse. Explosion. <span class="highlight-red">Aucun survivant.</span><span class="tw-cursor"></span>
+        </div>
+        <div class="v-timeline">
+            <div class="v-tl-item">
+                <div class="v-tl-time">20H30</div>
+                <div class="v-tl-text">Dîner avec Medvedev au siège du gouvernement russe</div>
+            </div>
+            <div class="v-tl-item">
+                <div class="v-tl-time">23H10</div>
+                <div class="v-tl-text">Arrivée au terminal VIP Vnoukovo-3</div>
+            </div>
+            <div class="v-tl-item">
+                <div class="v-tl-time">23H50</div>
+                <div class="v-tl-text">Tour de contrôle : autorisation de décollage accordée</div>
+            </div>
+            <div class="v-tl-item critical">
+                <div class="v-tl-time">23H57</div>
+                <div class="v-tl-text">Collision avec le chasse-neige — le Falcon explose sur la piste</div>
+            </div>
+            <div class="v-tl-item critical">
+                <div class="v-tl-time">00H02</div>
+                <div class="v-tl-text">Confirmation officielle : 4 morts, aucun survivant</div>
+            </div>
+        </div>
+        <div class="data-grid" style="margin-top:30px;">
+            <div class="data-card red-accent">
+                <div class="data-value red" data-target="4">0</div>
+                <div class="data-label">Victimes</div>
+            </div>
+            <div class="data-card red-accent">
+                <div class="data-value red" data-target="350" data-suffix="m">0</div>
+                <div class="data-label">Visibilité</div>
+            </div>
+            <div class="data-card">
+                <div class="data-value" data-target="63">0</div>
+                <div class="data-label">Âge de de Margerie</div>
+            </div>
+            <div class="data-card red-accent">
+                <div class="data-value red" data-target="0.87" data-decimal="true" data-suffix=" g/L">0</div>
+                <div class="data-label">Alcoolémie conducteur</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== SCENE 5 ==================== -->
+<section class="scene" id="scene-5" data-scene="5">
+    <div class="scene-inner">
+        <div class="evidence-tag">Pièce B-2 &mdash; Les responsables</div>
+        <h2 class="scene-title">L'enquête & le <span style="color:var(--red)">procès</span></h2>
+        <div class="scene-subtitle">Une chaîne de défaillances humaines</div>
+        <div class="typewriter-text">
+            L'enquête révèle une <span class="highlight-red">accumulation de négligences</span>. Trois responsables identifiés. Le procès s'ouvre en <span class="highlight">2019</span> à Moscou. Les peines, jugées "légères" par la famille de Margerie, soulèvent l'indignation.<span class="tw-cursor"></span>
+        </div>
+        <div class="pin-board">
+            <div class="pin-card">
+                <div class="pin"></div>
+                <h4>Suspect #1</h4>
+                <p>Vladimir Martynenko, conducteur du chasse-neige. Alcoolémie de 0.87 g/L au moment des faits. Désorienté sur la piste.</p>
+                <div class="verdict">Condamné à 4 ans de prison</div>
+            </div>
+            <div class="pin-card">
+                <div class="pin"></div>
+                <h4>Suspect #2</h4>
+                <p>Svetlana Krivsun, contrôleuse aérienne de service. A autorisé le décollage sans vérifier la présence de véhicules sur la piste active.</p>
+                <div class="verdict">Condamnée à 5 ans de prison</div>
+            </div>
+            <div class="pin-card">
+                <div class="pin"></div>
+                <h4>Suspect #3</h4>
+                <p>Vladimir Ledenev, responsable des mouvements au sol. N'a pas coordonné le retrait du chasse-neige avant l'autorisation de décollage.</p>
+                <div class="verdict">Condamné à 3 ans et demi</div>
+            </div>
+            <div class="pin-card">
+                <div class="pin"></div>
+                <h4>Facteur systémique</h4>
+                <p>Aéroport de Vnoukovo : aucun système de détection d'intrusion sur piste (A-SMGCS). Standards OACI non respectés.</p>
+                <div class="verdict">Aucune poursuite institutionnelle</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== SCENE 6 ==================== -->
+<section class="scene" id="scene-6" data-scene="6">
+    <div class="scene-inner">
+        <div class="evidence-tag">Pièce C-1 &mdash; Les conséquences</div>
+        <h2 class="scene-title">L'héritage</h2>
+        <div class="scene-subtitle">Total devient TotalEnergies — la page russe se tourne</div>
+        <div class="typewriter-text">
+            La disparition de de Margerie marque un tournant. <span class="highlight">Patrick Pouyanné</span> lui succède et maintient d'abord le cap russe. Mais l'invasion de l'Ukraine en 2022 force un <span class="highlight-red">retrait progressif</span>. En 2021, Total devient <span class="highlight">TotalEnergies</span> — symbole d'une transformation stratégique profonde.<span class="tw-cursor"></span>
+        </div>
+        <div class="evo-grid">
+            <div class="evo-card">
+                <div class="evo-year">2014</div>
+                <h4>Patrick Pouyanné nommé PDG</h4>
+                <p>Continuité stratégique immédiate. Les actifs russes sont maintenus.</p>
+            </div>
+            <div class="evo-card">
+                <div class="evo-year">2021</div>
+                <h4>Total → TotalEnergies</h4>
+                <p>Rebranding historique symbolisant le virage vers les renouvelables.</p>
+            </div>
+            <div class="evo-card">
+                <div class="evo-year" style="color:var(--red)">2022</div>
+                <h4 style="color:var(--red-light)">Invasion de l'Ukraine</h4>
+                <p>Gel des investissements russes. Maintien controversé de la participation Novatek.</p>
+            </div>
+            <div class="evo-card">
+                <div class="evo-year">2024</div>
+                <h4>Le bilan</h4>
+                <p>4e major mondiale. Cap sur la transition énergétique. La Russie reste un sujet sensible.</p>
+            </div>
+        </div>
+        <div class="data-grid" style="margin-top:24px;">
+            <div class="data-card">
+                <div class="data-value" data-target="49" data-suffix=".55€">0</div>
+                <div class="data-label">Action (oct. 2014)</div>
+            </div>
+            <div class="data-card">
+                <div class="data-value" data-target="58" data-suffix=".20€">0</div>
+                <div class="data-label">Action (2024)</div>
+            </div>
+            <div class="data-card">
+                <div class="data-value" data-target="35" data-suffix="%">0</div>
+                <div class="data-label">Objectif renouvelables 2030</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== END ==================== -->
+<section class="scene" id="scene-end">
+    <div class="scene-inner final-quote">
+        <blockquote>"On ne règle pas les problèmes<br>du monde en <span style="color:var(--red)">isolant</span> les gens."</blockquote>
+        <cite>— Christophe de Margerie, septembre 2014</cite>
+        <br>
+        <div class="case-closed" id="case-closed">Dossier clos</div>
+    </div>
+</section>
+
+<!-- === PROGRESS BAR === -->
+<div id="progress-bar">
+    <div class="prog-track">
+        <div class="prog-fill" id="prog-fill"></div>
+        <div class="prog-dots" id="prog-dots"></div>
+    </div>
+</div>
+
+<script>
+// ================================================================
+// CONFIG
+// ================================================================
+const SCENES = document.querySelectorAll('.scene[data-scene]');
+const SCENE_NAMES = ['Le sujet', 'La Russie', 'Crimée', 'L\'accident', 'Le procès', 'L\'héritage'];
+let started = false;
+
+// ================================================================
+// INTRO ANIMATION
+// ================================================================
+(function introAnim() {
+    // Particles
+    const c = document.getElementById('intro-canvas');
+    const ctx = c.getContext('2d');
+    function resize() { c.width = innerWidth; c.height = innerHeight; }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const dots = Array.from({length: 100}, () => ({
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 1.5 + 0.5,
+        a: Math.random() * 0.3 + 0.05
+    }));
+
+    function draw() {
+        if (!document.getElementById('intro')) return;
+        ctx.clearRect(0, 0, c.width, c.height);
+        dots.forEach(d => {
+            d.x += d.vx; d.y += d.vy;
+            if (d.x < 0) d.x = c.width;
+            if (d.x > c.width) d.x = 0;
+            if (d.y < 0) d.y = c.height;
+            if (d.y > c.height) d.y = 0;
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(192,57,43,${d.a})`;
+            ctx.fill();
+        });
+        for (let i = 0; i < dots.length; i++)
+            for (let j = i + 1; j < dots.length; j++) {
+                const dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 100) {
+                    ctx.beginPath();
+                    ctx.moveTo(dots[i].x, dots[i].y);
+                    ctx.lineTo(dots[j].x, dots[j].y);
+                    ctx.strokeStyle = `rgba(192,57,43,${0.05 * (1 - dist/100)})`;
+                    ctx.stroke();
+                }
+            }
+        requestAnimationFrame(draw);
+    }
+    draw();
+
+    // Stagger intro elements
+    gsap.to('.stamp', { opacity: 1, duration: 0.6, delay: 0.3 });
+    gsap.to('.intro-headline', { opacity: 1, duration: 0.8, delay: 0.6 });
+    gsap.to('.intro-sub', { opacity: 1, duration: 0.8, delay: 1.0 });
+    gsap.to('.intro-btn', { opacity: 1, duration: 0.8, delay: 1.4 });
+})();
+
+// ================================================================
+// NEWSPAPER FLYING TRANSITION
+// ================================================================
+function flyNewspapers(callback) {
+    const pages = document.querySelectorAll('.newspaper-page');
+    const layer = document.getElementById('newspaper-layer');
+    layer.style.pointerEvents = 'all';
+
+    pages.forEach((p, i) => {
+        gsap.fromTo(p, {
+            opacity: 0,
+            scale: 0.4,
+            rotation: -20 + Math.random() * 40,
+            y: window.innerHeight + 100,
+            x: Math.random() * 200 - 100
+        }, {
+            opacity: 1,
+            scale: 1,
+            rotation: -8 + Math.random() * 16,
+            y: 0,
+            x: 0,
+            duration: 1.2,
+            delay: i * 0.2,
+            ease: 'power3.out'
+        });
+    });
+
+    // Hold, then fly away
+    gsap.delayedCall(3.5, () => {
+        pages.forEach((p, i) => {
+            gsap.to(p, {
+                opacity: 0,
+                y: -(window.innerHeight + 200),
+                rotation: -30 + Math.random() * 60,
+                scale: 0.6,
+                duration: 1.0,
+                delay: i * 0.12,
+                ease: 'power2.in',
+                onComplete: () => {
+                    if (i === pages.length - 1) {
+                        layer.style.pointerEvents = 'none';
+                        if (callback) callback();
+                    }
+                }
+            });
+        });
+    });
+}
+
+// ================================================================
+// START
+// ================================================================
+function startExperience() {
+    const intro = document.getElementById('intro');
+    gsap.to(intro, {
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.inOut',
+        onComplete: () => {
+            intro.remove();
+            started = true;
+            init3D();
+            initScrollAnims();
+            initProgressBar();
+            initRedStrings();
+
+            // --- Dossier animation BEFORE newspapers ---
+            const overlay = document.getElementById('dossier-overlay');
+            const coverFull = document.getElementById('dossier-cover-full');
+            const coverLeft = document.getElementById('dossier-left');
+            const coverRight = document.getElementById('dossier-right');
+            const inner = document.getElementById('dossier-inner');
+
+            // Hide split covers initially
+            gsap.set([coverLeft, coverRight], { opacity: 0 });
+            gsap.set(inner, { opacity: 0 });
+            gsap.set(overlay, { opacity: 1 });
+            gsap.set('.dossier-folder', { scale: 0.8 });
+
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    overlay.remove();
+                    // THEN fly newspapers
+                    flyNewspapers(() => {
+                        document.getElementById('scroll-cta').style.display = 'flex';
+                        gsap.fromTo('#scroll-cta', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 });
+                    });
+                }
+            });
+
+            // Phase 1: Folder appears, scales up
+            tl.to('.dossier-folder', {
+                scale: 1,
+                duration: 0.8,
+                ease: 'back.out(1.4)'
+            });
+
+            // Phase 2: Pause to read the label
+            tl.to({}, { duration: 1 });
+
+            // Phase 3: Swap full cover for split covers, then open
+            tl.call(() => {
+                gsap.set(coverFull, { opacity: 0 });
+                gsap.set([coverLeft, coverRight], { opacity: 1 });
+                gsap.set(inner, { opacity: 1 });
+            });
+
+            // Phase 4: Open both flaps outward
+            tl.to(coverLeft, {
+                rotateY: -160,
+                duration: 1,
+                ease: 'power2.inOut'
+            }, '+=0.05');
+
+            tl.to(coverRight, {
+                rotateY: 160,
+                duration: 1,
+                ease: 'power2.inOut'
+            }, '<');
+
+            // Phase 5: Brief pause to see inner content
+            tl.to({}, { duration: 0.8 });
+
+            // Phase 6: Fade out the whole overlay
+            tl.to(overlay, {
+                opacity: 0,
+                duration: 0.6,
+                ease: 'power2.in'
+            });
+        }
+    });
+}
+
+// ================================================================
+// 3D BACKGROUND — GLOBE + STRATEGIC POINTS + PARTICLES
+// ================================================================
+let scene3D, camera, renderer, globeMesh, globeDots, particles;
+let strategicLabels = [];
+let mx = 0, my = 0;
+
+const STRATEGIC_POINTS = [
+    { name: 'Paris', lat: 48.86, lon: 2.35, color: 0xd4a84b },
+    { name: 'Moscou', lat: 55.75, lon: 37.62, color: 0xe74c3c },
+    { name: 'Vnoukovo', lat: 55.60, lon: 37.27, color: 0xe74c3c },
+    { name: 'Yamal', lat: 68.5, lon: 72.5, color: 0xd4a84b },
+    { name: 'Bruxelles', lat: 50.85, lon: 4.35, color: 0xd4a84b },
+    { name: 'Washington', lat: 38.9, lon: -77.0, color: 0xd4a84b },
+];
+
+function latLonToVec3(lat, lon, radius) {
+    const phi = (90 - lat) * Math.PI / 180;
+    const theta = (lon + 180) * Math.PI / 180;
+    return new THREE.Vector3(
+        -radius * Math.sin(phi) * Math.cos(theta),
+        radius * Math.cos(phi),
+        radius * Math.sin(phi) * Math.sin(theta)
+    );
+}
+
+function init3D() {
+    const canvas = document.getElementById('bg-canvas');
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+    scene3D = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 4.5);
+
+    // GLOBE wireframe
+    const gGeo = new THREE.SphereGeometry(1.6, 60, 60);
+    const gMat = new THREE.MeshBasicMaterial({
+        color: 0x1a1a2e, wireframe: true, transparent: true, opacity: 0.1
+    });
+    globeMesh = new THREE.Mesh(gGeo, gMat);
+    globeMesh.position.set(2, 0.3, -1);
+    scene3D.add(globeMesh);
+
+    // Globe surface dots
+    const dCount = 3000;
+    const dPos = new Float32Array(dCount * 3);
+    const dCol = new Float32Array(dCount * 3);
+    for (let i = 0; i < dCount; i++) {
+        const phi = Math.acos(2 * Math.random() - 1);
+        const theta = Math.random() * Math.PI * 2;
+        const r = 1.62;
+        dPos[i*3] = r * Math.sin(phi) * Math.cos(theta) + 2;
+        dPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta) + 0.3;
+        dPos[i*3+2] = r * Math.cos(phi) - 1;
+        const gold = Math.random() < 0.12;
+        dCol[i*3] = gold ? 0.83 : 0.15;
+        dCol[i*3+1] = gold ? 0.66 : 0.15;
+        dCol[i*3+2] = gold ? 0.29 : 0.25;
+    }
+    const dGeo = new THREE.BufferGeometry();
+    dGeo.setAttribute('position', new THREE.BufferAttribute(dPos, 3));
+    dGeo.setAttribute('color', new THREE.BufferAttribute(dCol, 3));
+    globeDots = new THREE.Points(dGeo, new THREE.PointsMaterial({
+        size: 0.012, vertexColors: true, transparent: true, opacity: 0.5, sizeAttenuation: true
+    }));
+    scene3D.add(globeDots);
+
+    // Strategic point markers (3D spheres + arcs)
+    STRATEGIC_POINTS.forEach(sp => {
+        const pos = latLonToVec3(sp.lat, sp.lon, 1.65);
+        pos.x += 2; pos.y += 0.3; pos.z -= 1;
+
+        // Glowing sphere
+        const sGeo = new THREE.SphereGeometry(0.025, 16, 16);
+        const sMat = new THREE.MeshBasicMaterial({ color: sp.color });
+        const sMesh = new THREE.Mesh(sGeo, sMat);
+        sMesh.position.copy(pos);
+        scene3D.add(sMesh);
+
+        // Pulse ring
+        const rGeo = new THREE.RingGeometry(0.03, 0.05, 32);
+        const rMat = new THREE.MeshBasicMaterial({ color: sp.color, transparent: true, opacity: 0.4, side: THREE.DoubleSide });
+        const rMesh = new THREE.Mesh(rGeo, rMat);
+        rMesh.position.copy(pos);
+        rMesh.lookAt(new THREE.Vector3(2, 0.3, -1)); // face globe center
+        scene3D.add(rMesh);
+
+        // HTML label
+        const label = document.createElement('div');
+        label.className = 'globe-label' + (sp.color === 0xe74c3c ? ' red' : '');
+        label.textContent = sp.name;
+        label.style.display = 'none';
+        document.body.appendChild(label);
+        strategicLabels.push({ mesh: sMesh, el: label });
+    });
+
+    // Arcs between Paris-Moscow, Paris-Yamal
+    const arcPairs = [[0, 1], [0, 3], [1, 2]];
+    arcPairs.forEach(([a, b]) => {
+        const pA = latLonToVec3(STRATEGIC_POINTS[a].lat, STRATEGIC_POINTS[a].lon, 1.65);
+        const pB = latLonToVec3(STRATEGIC_POINTS[b].lat, STRATEGIC_POINTS[b].lon, 1.65);
+        pA.x += 2; pA.y += 0.3; pA.z -= 1;
+        pB.x += 2; pB.y += 0.3; pB.z -= 1;
+        const mid = new THREE.Vector3().addVectors(pA, pB).multiplyScalar(0.5);
+        const dir = mid.clone().sub(new THREE.Vector3(2, 0.3, -1)).normalize();
+        mid.add(dir.multiplyScalar(0.4));
+        const curve = new THREE.QuadraticBezierCurve3(pA, mid, pB);
+        const lGeo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(40));
+        const lMat = new THREE.LineBasicMaterial({ color: 0xd4a84b, transparent: true, opacity: 0.2 });
+        scene3D.add(new THREE.Line(lGeo, lMat));
+    });
+
+    // Floating particles
+    const pCount = 600;
+    const pPos = new Float32Array(pCount * 3);
+    for (let i = 0; i < pCount; i++) {
+        pPos[i*3] = (Math.random() - 0.5) * 25;
+        pPos[i*3+1] = (Math.random() - 0.5) * 25;
+        pPos[i*3+2] = (Math.random() - 0.5) * 12;
+    }
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
+        size: 0.015, color: 0xc0392b, transparent: true, opacity: 0.2, sizeAttenuation: true
+    }));
+    scene3D.add(particles);
+
+    document.addEventListener('mousemove', e => {
+        mx = (e.clientX / innerWidth - 0.5) * 2;
+        my = (e.clientY / innerHeight - 0.5) * 2;
+    });
+
+    window.addEventListener('resize', () => {
+        camera.aspect = innerWidth / innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(innerWidth, innerHeight);
+    });
+
+    animate3D();
+}
+
+function animate3D() {
+    requestAnimationFrame(animate3D);
+
+    const t = Date.now() * 0.001;
+    const scrollP = document.documentElement.scrollHeight - innerHeight;
+    const sp = scrollP > 0 ? scrollY / scrollP : 0;
+    const sceneIdx = sp * 6;
+
+    // Globe rotation
+    if (globeMesh) {
+        globeMesh.rotation.y += 0.0015;
+        globeMesh.rotation.x = my * 0.04;
+        // Move globe across scenes
+        globeMesh.position.x = 2 - sp * 2.5;
+        globeMesh.position.z = -1 + sp * 0.5;
+
+        // Red pulse during accident scene
+        if (sceneIdx > 2.8 && sceneIdx < 4.5) {
+            const intensity = 1 - Math.abs(sceneIdx - 3.65) / 0.85;
+            const pulse = 0.5 + Math.sin(t * 3) * 0.2;
+            globeMesh.material.color.setRGB(0.1 + intensity * 0.5 * pulse, 0.04, 0.06);
+            globeMesh.material.opacity = 0.1 + intensity * 0.12;
+        } else {
+            globeMesh.material.color.setRGB(0.1, 0.1, 0.18);
+            globeMesh.material.opacity = 0.1;
+        }
+    }
+
+    if (globeDots) {
+        globeDots.rotation.y += 0.0015;
+        globeDots.rotation.x = my * 0.04;
+    }
+
+    if (particles) {
+        const pp = particles.geometry.attributes.position.array;
+        for (let i = 0; i < pp.length; i += 3) {
+            pp[i+1] += Math.sin(t + i * 0.1) * 0.0004;
+        }
+        particles.geometry.attributes.position.needsUpdate = true;
+        particles.rotation.y += 0.0002;
+    }
+
+    // Camera parallax
+    camera.position.x += (mx * 0.25 - camera.position.x) * 0.02;
+    camera.position.y += (-my * 0.15 - camera.position.y) * 0.02;
+    camera.lookAt(0, 0, -1);
+
+    // Update labels
+    strategicLabels.forEach(sl => {
+        const v = sl.mesh.position.clone().project(camera);
+        const x = (v.x * 0.5 + 0.5) * innerWidth;
+        const y = (-v.y * 0.5 + 0.5) * innerHeight;
+        sl.el.style.left = x + 'px';
+        sl.el.style.top = y + 'px';
+        sl.el.style.display = v.z < 1 ? 'block' : 'none';
+        sl.el.style.opacity = (v.z < 1 && sp < 0.5) ? 0.8 : 0;
+    });
+
+    renderer.render(scene3D, camera);
+}
+
+// ================================================================
+// RED STRINGS ANIMATION
+// ================================================================
+function initRedStrings() {
+    const svg = document.getElementById('red-strings');
+    const ns = 'http://www.w3.org/2000/svg';
+    const scenes = Array.from(document.querySelectorAll('.scene[data-scene]'));
+    const endScene = document.getElementById('scene-end');
+    if (endScene) scenes.push(endScene);
+
+    for (let i = 0; i < scenes.length - 1; i++) {
+        (function(idx) {
+            const sceneA = scenes[idx];
+            const sceneB = scenes[idx + 1];
+
+            const group = document.createElementNS(ns, 'g');
+            group.classList.add('string-group');
+            group.dataset.index = idx;
+
+            const path = document.createElementNS(ns, 'path');
+            path.classList.add('red-string-path');
+            group.appendChild(path);
+
+            const pinStart = _createPin(ns);
+            group.appendChild(pinStart);
+            const pinEnd = _createPin(ns);
+            group.appendChild(pinEnd);
+
+            svg.appendChild(group);
+
+            function updatePath() {
+                const side = idx % 2 === 0;
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const x1 = side ? vw * 0.7 + (idx * 30) : vw * 0.3 - (idx * 20);
+                const y1 = vh * 0.82;
+                const x2 = side ? vw * 0.25 + (idx * 15) : vw * 0.72 - (idx * 15);
+                const y2 = vh * 0.18;
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const curvature = (side ? 1 : -1) * 0.3;
+                const cx1 = x1 + dx * 0.2 + Math.abs(dy) * curvature;
+                const cy1 = y1 + dy * 0.35;
+                const cx2 = x1 + dx * 0.8 - Math.abs(dy) * curvature;
+                const cy2 = y1 + dy * 0.65;
+                path.setAttribute('d', 'M ' + x1 + ',' + y1 + ' C ' + cx1 + ',' + cy1 + ' ' + cx2 + ',' + cy2 + ' ' + x2 + ',' + y2);
+                pinStart.setAttribute('transform', 'translate(' + x1 + ',' + y1 + ')');
+                pinEnd.setAttribute('transform', 'translate(' + x2 + ',' + y2 + ')');
+            }
+
+            updatePath();
+
+            var len = path.getTotalLength();
+            path.style.strokeDasharray = len;
+            path.style.strokeDashoffset = len;
+            path.style.opacity = '0';
+            pinStart.style.opacity = '0';
+            pinEnd.style.opacity = '0';
+
+            ScrollTrigger.create({
+                trigger: sceneA,
+                start: 'center center',
+                endTrigger: sceneB,
+                end: 'top 60%',
+                scrub: 0.8,
+                onUpdate: function(self) {
+                    var progress = self.progress;
+                    updatePath();
+                    var currentLen = path.getTotalLength();
+                    path.style.strokeDasharray = currentLen;
+                    path.style.strokeDashoffset = currentLen * (1 - progress);
+                    path.style.opacity = String(Math.min(progress * 3, 0.35));
+                    pinStart.style.opacity = progress > 0.02 ? '1' : '0';
+                    pinEnd.style.opacity = progress > 0.85 ? '1' : '0';
+                    if (progress > 0.95) group.classList.add('visible');
+                    else group.classList.remove('visible');
+                },
+                onLeaveBack: function() {
+                    path.style.opacity = '0';
+                    path.style.strokeDashoffset = String(path.getTotalLength());
+                    pinStart.style.opacity = '0';
+                    pinEnd.style.opacity = '0';
+                    group.classList.remove('visible');
+                }
+            });
+        })(i);
+    }
+
+    window.addEventListener('resize', function() { ScrollTrigger.refresh(); });
+}
+
+function _createPin(ns) {
+    var g = document.createElementNS(ns, 'g');
+    g.style.transition = 'opacity 0.4s ease';
+    var shadow = document.createElementNS(ns, 'circle');
+    shadow.setAttribute('r', '6'); shadow.setAttribute('fill', 'rgba(0,0,0,0.3)');
+    shadow.setAttribute('cx', '1'); shadow.setAttribute('cy', '1');
+    g.appendChild(shadow);
+    var outer = document.createElementNS(ns, 'circle');
+    outer.setAttribute('r', '6'); outer.setAttribute('cx', '0'); outer.setAttribute('cy', '0');
+    outer.classList.add('string-pin');
+    g.appendChild(outer);
+    var inner = document.createElementNS(ns, 'circle');
+    inner.setAttribute('r', '2'); inner.setAttribute('cx', '-1.5'); inner.setAttribute('cy', '-1.5');
+    inner.classList.add('pin-hole');
+    g.appendChild(inner);
+    return g;
+}
+
+// ================================================================
+// SCROLL ANIMATIONS
+// ================================================================
+function initScrollAnims() {
+    gsap.registerPlugin(ScrollTrigger);
+
+    SCENES.forEach((scene, i) => {
+        const inner = scene.querySelector('.scene-inner');
+        const sceneNum = scene.dataset.scene;
+
+        // --- SCENE-SPECIFIC ENTRY TRANSITIONS ---
+        if (sceneNum === '1') {
+            // Scene 1: Typewriter reveal — clip-path wipe left to right
+            gsap.set(inner, { opacity: 1, y: 0, clipPath: 'inset(0 100% 0 0)' });
+            gsap.to(inner, {
+                clipPath: 'inset(0 0% 0 0)', duration: 2.2, ease: 'steps(40)',
+                scrollTrigger: { trigger: scene, start: 'top 72%', end: 'top 30%', toggleActions: 'play none none reverse' }
+            });
+
+        } else if (sceneNum === '2') {
+            // Scene 2: Documents dropped on table — dossier-items have enhanced animation below
+            gsap.set(inner, { opacity: 0, y: 20 });
+            gsap.to(inner, {
+                opacity: 1, y: 0, duration: 0.6, ease: 'power2.out',
+                scrollTrigger: { trigger: scene, start: 'top 72%', end: 'top 30%', toggleActions: 'play none none reverse' }
+            });
+
+        } else if (sceneNum === '3') {
+            // Scene 3: Iron Curtain — red veil descends then dissolves
+            let curtain = scene.querySelector('.iron-curtain');
+            if (!curtain) {
+                curtain = document.createElement('div');
+                curtain.className = 'iron-curtain';
+                scene.style.position = 'relative';
+                scene.style.overflow = 'hidden';
+                scene.appendChild(curtain);
+            }
+            gsap.set(inner, { opacity: 0, y: 0 });
+            gsap.set(curtain, { scaleY: 0, transformOrigin: 'top center', opacity: 1 });
+
+            const tl3 = gsap.timeline({
+                scrollTrigger: { trigger: scene, start: 'top 72%', toggleActions: 'play none none reverse' }
+            });
+            tl3.to(curtain, { scaleY: 1, duration: 0.7, ease: 'power2.in' })
+               .to(inner, { opacity: 1, duration: 0.5, ease: 'power1.out' }, 0.5)
+               .to(curtain, { opacity: 0, duration: 1, ease: 'power2.out' }, 0.8);
+
+        } else if (sceneNum === '4') {
+            // Scene 4: Flash/Explosion + Camera Shake — most dramatic
+            let flash = scene.querySelector('.flash-overlay');
+            if (!flash) {
+                flash = document.createElement('div');
+                flash.className = 'flash-overlay';
+                scene.style.position = 'relative';
+                scene.style.overflow = 'hidden';
+                scene.appendChild(flash);
+            }
+            gsap.set(inner, { opacity: 0, y: 0 });
+
+            const tl4 = gsap.timeline({
+                scrollTrigger: { trigger: scene, start: 'top 72%', toggleActions: 'play none none reverse' }
+            });
+            tl4.to(flash, { opacity: 1, duration: 0.08, ease: 'power4.in' })
+               .to(flash, { opacity: 0, duration: 0.5, ease: 'power2.out' }, 0.08)
+               .add(() => { inner.classList.add('shake-active'); }, 0.12)
+               .to(inner, { opacity: 1, duration: 0.3, ease: 'power1.out' }, 0.12)
+               .add(() => { inner.classList.remove('shake-active'); }, 0.62);
+
+        } else if (sceneNum === '5') {
+            // Scene 5: Cork board — pin-cards get enhanced "pin-thud" animation below
+            gsap.set(inner, { opacity: 0, y: 0 });
+            gsap.to(inner, {
+                opacity: 1, y: 0, duration: 0.5, ease: 'power2.out',
+                scrollTrigger: { trigger: scene, start: 'top 72%', end: 'top 30%', toggleActions: 'play none none reverse' }
+            });
+
+        } else if (sceneNum === '6') {
+            // Scene 6: Page turn — rotateY perspective flip from left
+            gsap.set(inner, { opacity: 0, rotateY: -90, transformOrigin: 'left center', y: 0 });
+            gsap.to(inner, {
+                opacity: 1, rotateY: 0, duration: 1.2, ease: 'power3.out',
+                scrollTrigger: { trigger: scene, start: 'top 72%', end: 'top 30%', toggleActions: 'play none none reverse' }
+            });
+
+        } else {
+            // Fallback: default fade
+            gsap.to(inner, {
+                opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+                scrollTrigger: { trigger: scene, start: 'top 72%', end: 'top 30%', toggleActions: 'play none none reverse' }
+            });
+        }
+
+        // Stagger data cards
+        const cards = scene.querySelectorAll('.data-card');
+        if (cards.length) {
+            gsap.fromTo(cards,
+                { opacity: 0, y: 25, scale: 0.97 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.08, ease: 'power2.out',
+                  scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                }
+            );
+        }
+
+        // Stagger dossier items
+        scene.querySelectorAll('.dossier-item').forEach((item, j) => {
+            if (sceneNum === '2') {
+                // Scene 2: Documents dropped on table — rotation + bounce landing
+                const startRot = -8 + Math.random() * 16;
+                gsap.fromTo(item,
+                    { opacity: 0, y: -80, rotation: startRot, scale: 0.85 },
+                    { opacity: 1, y: 0, rotation: startRot * 0.15, scale: 1, duration: 0.7,
+                      delay: j * 0.2, ease: 'bounce.out',
+                      scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                    }
+                );
+            } else {
+                gsap.fromTo(item,
+                    { opacity: 0, x: j % 2 === 0 ? -30 : 30, rotation: j % 2 === 0 ? -2 : 2 },
+                    { opacity: 1, x: 0, rotation: 0, duration: 0.6, delay: j * 0.12, ease: 'power2.out',
+                      scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                    }
+                );
+            }
+        });
+
+        // Timeline items
+        scene.querySelectorAll('.v-tl-item').forEach((item, j) => {
+            gsap.fromTo(item,
+                { opacity: 0, x: -20 },
+                { opacity: 1, x: 0, duration: 0.4, delay: j * 0.12, ease: 'power2.out',
+                  scrollTrigger: { trigger: scene, start: 'top 55%', toggleActions: 'play none none reverse' }
+                }
+            );
+        });
+
+        // Pin board cards
+        scene.querySelectorAll('.pin-card').forEach((card, j) => {
+            if (sceneNum === '5') {
+                // Scene 5: Cork board pinning — drop from above with bounce "thud"
+                gsap.fromTo(card,
+                    { opacity: 0, y: -60, scale: 1.05 },
+                    { opacity: 1, y: 0, scale: 1, duration: 0.45,
+                      delay: j * 0.18, ease: 'bounce.out',
+                      scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                    }
+                );
+            } else {
+                gsap.fromTo(card,
+                    { opacity: 0, scale: 0.92, y: 20, rotation: -3 + Math.random() * 6 },
+                    { opacity: 1, scale: 1, y: 0, rotation: 0, duration: 0.5, delay: j * 0.1, ease: 'back.out(1.4)',
+                      scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                    }
+                );
+            }
+        });
+
+        // Evo cards
+        scene.querySelectorAll('.evo-card').forEach((card, j) => {
+            gsap.fromTo(card,
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, duration: 0.5, delay: j * 0.1, ease: 'power2.out',
+                  scrollTrigger: { trigger: scene, start: 'top 50%', toggleActions: 'play none none reverse' }
+                }
+            );
+        });
+
+        // Counters
+        scene.querySelectorAll('.data-value[data-target]').forEach(counter => {
+            const target = parseFloat(counter.dataset.target);
+            const isDecimal = counter.dataset.decimal === 'true';
+            const suffix = counter.dataset.suffix || '';
+            ScrollTrigger.create({
+                trigger: scene,
+                start: 'top 60%',
+                onEnter: () => animCounter(counter, target, isDecimal, suffix),
+                onLeaveBack: () => { counter.textContent = '0'; }
+            });
+        });
+    });
+
+    // End quote
+    const endInner = document.querySelector('#scene-end .scene-inner');
+    gsap.to(endInner, {
+        opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+        scrollTrigger: { trigger: '#scene-end', start: 'top 70%', toggleActions: 'play none none reverse' }
+    });
+
+    // Case closed stamp
+    ScrollTrigger.create({
+        trigger: '#scene-end',
+        start: 'top 50%',
+        onEnter: () => {
+            gsap.to('#case-closed', {
+                opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2)',
+                onStart: () => { document.getElementById('case-closed').style.transform = 'rotate(-3deg) scale(1.8)'; },
+            });
+            gsap.to('#case-closed', { scale: 1, duration: 0.3, delay: 0.3 });
+        }
+    });
+
+    // Hide scroll CTA
+    ScrollTrigger.create({
+        trigger: '#scene-1',
+        start: 'top 55%',
+        onEnter: () => gsap.to('#scroll-cta', { opacity: 0, duration: 0.4, onComplete: () => { document.getElementById('scroll-cta').style.display = 'none'; } })
+    });
+
+    // Newspaper re-trigger between scene 3 and 4 (entering the accident)
+    ScrollTrigger.create({
+        trigger: '#scene-4',
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+            const layer = document.getElementById('newspaper-layer');
+            const pages = layer.querySelectorAll('.newspaper-page');
+            // Quick flash of newspapers
+            pages.forEach((p, i) => {
+                gsap.fromTo(p,
+                    { opacity: 0, y: -200, rotation: Math.random() * 20 - 10, scale: 0.7 },
+                    { opacity: 0.85, y: 0, rotation: Math.random() * 8 - 4, scale: 0.9, duration: 0.8, delay: i * 0.1, ease: 'power2.out' }
+                );
+            });
+            gsap.delayedCall(2, () => {
+                pages.forEach((p, i) => {
+                    gsap.to(p, { opacity: 0, y: 200, duration: 0.6, delay: i * 0.08, ease: 'power2.in' });
+                });
+            });
+        }
+    });
+}
+
+// ================================================================
+// COUNTER
+// ================================================================
+function animCounter(el, target, isDecimal, suffix) {
+    const dur = 2;
+    const start = performance.now();
+    (function tick(now) {
+        const p = Math.min((now - start) / (dur * 1000), 1);
+        const e = 1 - Math.pow(1 - p, 3);
+        const v = target * e;
+        let d;
+        if (isDecimal) {
+            const dec = String(target).split('.')[1]?.length || 1;
+            d = v.toFixed(p >= 1 ? dec : 1);
+        } else {
+            d = Math.round(v);
+        }
+        el.textContent = d + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+    })(performance.now());
+}
+
+// ================================================================
+// PROGRESS BAR
+// ================================================================
+function initProgressBar() {
+    const dots = document.getElementById('prog-dots');
+    SCENE_NAMES.forEach((name, i) => {
+        const w = document.createElement('div');
+        w.className = 'prog-dot-wrap';
+        w.innerHTML = `<span class="prog-label">${name}</span><div class="prog-dot"></div>`;
+        w.onclick = () => document.getElementById(`scene-${i+1}`).scrollIntoView({ behavior: 'smooth' });
+        dots.appendChild(w);
+    });
+
+    window.addEventListener('scroll', () => {
+        if (!started) return;
+        const total = document.documentElement.scrollHeight - innerHeight;
+        const pct = total > 0 ? (scrollY / total) * 100 : 0;
+        document.getElementById('prog-fill').style.width = pct + '%';
+
+        SCENES.forEach((s, i) => {
+            const r = s.getBoundingClientRect();
+            const w = dots.children[i];
+            const active = r.top < innerHeight * 0.55 && r.bottom > innerHeight * 0.3;
+            w.classList.toggle('active', active);
+            w.querySelector('.prog-dot').classList.toggle('active', active);
+        });
+    });
+}
+</script>
+</body>
+</html>
