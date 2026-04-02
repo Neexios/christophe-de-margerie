@@ -1533,12 +1533,12 @@
             opacity: 0;
             pointer-events: none;
         }
-        #flash-photo-overlay .flash-white {
+        #flash-photo-overlay .shutter-bar {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #fff;
-            opacity: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: var(--bg);
         }
         #flash-photo-overlay .flash-title {
             font-family: var(--typewriter);
@@ -1549,6 +1549,7 @@
             white-space: nowrap;
             overflow: hidden;
             opacity: 0;
+            z-index: 2;
         }
 
         /* === BANDE ENREGISTREMENT / TEMOIGNAGE OVERLAY === */
@@ -2249,7 +2250,8 @@
 
 <!-- === FLASH PHOTO / PAPARAZZI (scene 3->4 transition) === -->
 <div id="flash-photo-overlay">
-    <div class="flash-white"></div>
+    <div class="shutter-bar" style="top:0;"></div>
+    <div class="shutter-bar" style="bottom:0;"></div>
     <div class="flash-title"></div>
 </div>
 
@@ -2264,6 +2266,12 @@
 </div>
 
 <script>
+// ================================================================
+// SCROLL RESET ON LOAD
+// ================================================================
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
 // ================================================================
 // CONFIG
 // ================================================================
@@ -2703,7 +2711,7 @@ function animate3D() {
         sl.el.style.left = x + 'px';
         sl.el.style.top = y + 'px';
         sl.el.style.display = v.z < 1 ? 'block' : 'none';
-        sl.el.style.opacity = (v.z < 1 && sp < 0.5) ? 0.8 : 0;
+        sl.el.style.opacity = (v.z < 1 && sp < 0.08) ? 0.8 : 0;
     });
 
     // Update flight path (airplane position + trail)
@@ -3624,7 +3632,7 @@ function initProgressBar() {
 (function initFlashPhoto() {
     var overlay = document.getElementById('flash-photo-overlay');
     if (!overlay) return;
-    var flashWhite = overlay.querySelector('.flash-white');
+    var bars = overlay.querySelectorAll('.shutter-bar');
     var flashTitle = overlay.querySelector('.flash-title');
     var titleText = 'QUI AVAIT INT\u00c9R\u00caT ?';
 
@@ -3636,19 +3644,15 @@ function initProgressBar() {
             once: true,
             onEnter: function() {
                 var tl = gsap.timeline();
-                // Show overlay (black)
-                tl.to(overlay, { opacity: 1, duration: 0.05 });
+                // Show overlay
+                tl.to(overlay, { opacity: 1, duration: 0.15 });
 
-                // 4 rapid camera flashes
-                for (var i = 0; i < 4; i++) {
-                    tl.to(flashWhite, { opacity: 1, duration: 0.06 }, '+=' + (i === 0 ? 0.1 : 0.15));
-                    tl.to(flashWhite, { opacity: 0, duration: 0.08 });
-                }
+                // Camera shutter closes (bars grow from top and bottom)
+                tl.to(bars[0], { height: '50%', duration: 0.4, ease: 'power2.in' }, 0.15);
+                tl.to(bars[1], { height: '50%', duration: 0.4, ease: 'power2.in' }, 0.15);
 
-                // Brief pause after flashes
+                // Typewriter effect on black screen
                 tl.addLabel('typewriter', '+=0.3');
-
-                // Typewriter effect: letters appear one by one
                 tl.set(flashTitle, { opacity: 1 }, 'typewriter');
                 tl.call(function() {
                     var el = flashTitle;
@@ -3664,9 +3668,11 @@ function initProgressBar() {
                     }, 45);
                 }, null, 'typewriter');
 
-                // Hold title for 1.5s then fade out
-                tl.to(overlay, { opacity: 0, duration: 0.4, ease: 'power2.in' }, 'typewriter+=' + (titleText.length * 0.045 + 1.5));
-                // Reset
+                // Hold then shutter opens
+                var openTime = 'typewriter+=' + (titleText.length * 0.045 + 1.5);
+                tl.to(bars[0], { height: '0%', duration: 0.4, ease: 'power2.out' }, openTime);
+                tl.to(bars[1], { height: '0%', duration: 0.4, ease: 'power2.out' }, openTime);
+                tl.to(overlay, { opacity: 0, duration: 0.3 }, openTime + '+=0.3');
                 tl.set(flashTitle, { opacity: 0 });
                 tl.call(function() { flashTitle.textContent = ''; });
             }
