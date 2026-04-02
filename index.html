@@ -226,6 +226,75 @@
             font-weight: 700;
         }
 
+        /* === VIDEO OVERLAY === */
+        #video-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1900;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #video-overlay .cinema-bar {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: #000;
+            z-index: 2;
+        }
+
+        #video-overlay .cinema-bar.top { top: 0; }
+        #video-overlay .cinema-bar.bottom { bottom: 0; }
+
+        #video-overlay video {
+            max-width: 85%;
+            max-height: 75vh;
+            border: 1px solid rgba(212,168,75,0.2);
+            box-shadow: 0 0 60px rgba(0,0,0,0.8);
+            z-index: 1;
+        }
+
+        #video-overlay .video-label {
+            font-family: var(--typewriter);
+            font-size: 12px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gray);
+            margin-top: 16px;
+            z-index: 1;
+            opacity: 0;
+        }
+
+        #video-overlay .skip-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            font-family: var(--typewriter);
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gray);
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 20px;
+            cursor: pointer;
+            z-index: 3;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        #video-overlay .skip-btn:hover {
+            color: var(--white);
+            border-color: var(--red);
+        }
+
         /* === DOSSIER OVERLAY === */
         #dossier-overlay {
             position: fixed;
@@ -1742,6 +1811,15 @@
     </div>
 </div>
 
+<!-- === VIDEO OVERLAY === -->
+<div id="video-overlay">
+    <div class="cinema-bar top"></div>
+    <div class="cinema-bar bottom"></div>
+    <video id="intro-video" src="intro-video.mp4" preload="auto"></video>
+    <div class="video-label" id="video-label">Document classifié — Lecture en cours</div>
+    <button class="skip-btn" id="skip-video">Passer ▸</button>
+</div>
+
 <!-- === DOSSIER OVERLAY === -->
 <div id="dossier-overlay">
     <div class="dossier-folder">
@@ -2414,6 +2492,57 @@ function flyNewspapers(callback) {
 // ================================================================
 // START
 // ================================================================
+// ================================================================
+// INTRO VIDEO PLAYER
+// ================================================================
+function playIntroVideo(callback) {
+    const overlay = document.getElementById('video-overlay');
+    const video = document.getElementById('intro-video');
+    const label = document.getElementById('video-label');
+    const skipBtn = document.getElementById('skip-video');
+    const barTop = overlay.querySelector('.cinema-bar.top');
+    const barBottom = overlay.querySelector('.cinema-bar.bottom');
+
+    if (!overlay || !video) { if (callback) callback(); return; }
+
+    let finished = false;
+    function finish() {
+        if (finished) return;
+        finished = true;
+        video.pause();
+        gsap.to(overlay, {
+            opacity: 0, duration: 0.6, ease: 'power2.in',
+            onComplete: () => {
+                overlay.remove();
+                if (callback) callback();
+            }
+        });
+    }
+
+    // Cinema bars close in
+    overlay.style.pointerEvents = 'all';
+    gsap.to(overlay, { opacity: 1, duration: 0.3 });
+    gsap.to(barTop, { height: '8%', duration: 0.6, ease: 'power2.out' });
+    gsap.to(barBottom, { height: '8%', duration: 0.6, ease: 'power2.out' });
+
+    // Label and skip button fade in
+    gsap.to(label, { opacity: 1, duration: 0.5, delay: 0.5 });
+    gsap.to(skipBtn, { opacity: 1, duration: 0.5, delay: 1 });
+
+    // Start video after bars are in place
+    gsap.delayedCall(0.8, () => {
+        video.play().catch(() => {});
+    });
+
+    // Skip button
+    skipBtn.addEventListener('click', finish);
+
+    // When video ends naturally
+    video.addEventListener('ended', () => {
+        gsap.delayedCall(0.5, finish);
+    });
+}
+
 function startExperience() {
     const intro = document.getElementById('intro');
     gsap.to(intro, {
@@ -2444,10 +2573,13 @@ function startExperience() {
             const tl = gsap.timeline({
                 onComplete: () => {
                     overlay.remove();
-                    // THEN fly newspapers
-                    flyNewspapers(() => {
-                        document.getElementById('scroll-cta').style.display = 'flex';
-                        gsap.fromTo('#scroll-cta', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 });
+                    // THEN play video
+                    playIntroVideo(() => {
+                        // THEN fly newspapers
+                        flyNewspapers(() => {
+                            document.getElementById('scroll-cta').style.display = 'flex';
+                            gsap.fromTo('#scroll-cta', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 });
+                        });
                     });
                 }
             });
