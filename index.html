@@ -1772,6 +1772,38 @@
             transition: width 0.1s linear;
         }
 
+        /* === COUNTDOWN DISPLAY === */
+        .countdown-display {
+            text-align: center;
+            margin: 20px 0 30px;
+        }
+        .countdown-time {
+            font-family: 'Source Code Pro', monospace;
+            font-size: clamp(48px, 8vw, 100px);
+            font-weight: 700;
+            color: var(--red);
+            letter-spacing: 6px;
+            text-shadow: 0 0 30px rgba(192,57,43,0.4), 0 0 60px rgba(192,57,43,0.2);
+            opacity: 0;
+        }
+
+        /* === PUNCH NUMBER === */
+        .punch-number {
+            text-align: center;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        .punch-number span {
+            display: inline-block;
+            font-family: 'Source Code Pro', monospace;
+            font-size: clamp(80px, 15vw, 200px);
+            font-weight: 700;
+            color: var(--red);
+            opacity: 0;
+            transform: scale(3);
+            text-shadow: 0 0 40px rgba(192,57,43,0.5);
+        }
+
     </style>
 </head>
 <body>
@@ -1912,6 +1944,9 @@
         <div class="evidence-tag">Acte I &mdash; L'impact</div>
         <h2 class="scene-title">Minuit à Vnoukovo</h2>
         <div class="scene-subtitle">Moscou, 20 octobre 2014 — 23h57</div>
+        <div class="countdown-display" id="countdown-2357">
+            <span class="countdown-time">23:57:00</span>
+        </div>
         <div class="typewriter-text" id="tw-1">
             Un jet privé s'élance sur une piste glacée. À son bord, un homme à la tête d'une entreprise qui pèse plus de <span class="highlight">200 milliards d'euros</span>. Quelques secondes plus tard — <span class="highlight-red">collision, explosion, aucun survivant</span>. Cet homme, c'est <span class="highlight">Christophe de Margerie</span>. Officiellement, un accident. Mais dans un monde où des milliards sont en jeu — rien n'est jamais totalement anodin.<span class="tw-cursor"></span>
         </div>
@@ -2000,6 +2035,9 @@
         </div>
         <div class="typewriter-text" style="text-align:center;border-color:var(--gold);margin-top:24px;">
             En intelligence économique, on ne cherche pas le coupable — on analyse les <span class="highlight">intérêts</span>. Une seule question : <span class="highlight-red">à qui ça profite ?</span>
+        </div>
+        <div class="punch-number" id="punch-80">
+            <span>80%</span>
         </div>
         <div class="data-grid" style="margin-top:30px;">
             <div class="data-card">
@@ -2880,6 +2918,47 @@ function initScrollAnims() {
                     onEnter: onReveal, onLeaveBack: onHide }
             });
 
+            // Countdown 23:57 animation
+            var countdown = document.getElementById('countdown-2357');
+            if (countdown) {
+                var timeEl = countdown.querySelector('.countdown-time');
+                ScrollTrigger.create({
+                    trigger: '#scene-1',
+                    start: 'top 60%',
+                    once: true,
+                    onEnter: function() {
+                        // Fade in the time
+                        gsap.to(timeEl, { opacity: 1, duration: 0.5 });
+                        // Simulate ticking from 23:55:00 to 23:57:00
+                        var startSec = 23*3600 + 55*60; // 23:55:00
+                        var endSec = 23*3600 + 57*60;   // 23:57:00
+                        var current = startSec;
+                        var duration = 3000; // 3 seconds to tick through
+                        var startTime = performance.now();
+                        function tick(now) {
+                            var progress = Math.min((now - startTime) / duration, 1);
+                            var eased = 1 - Math.pow(1 - progress, 2);
+                            current = Math.floor(startSec + (endSec - startSec) * eased);
+                            var h = Math.floor(current / 3600);
+                            var m = Math.floor((current % 3600) / 60);
+                            var s = current % 60;
+                            timeEl.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+                            if (progress < 1) {
+                                requestAnimationFrame(tick);
+                            } else {
+                                // Flash IMPACT
+                                gsap.to(timeEl, { scale: 1.3, duration: 0.15, ease: 'power4.out', onComplete: function() {
+                                    timeEl.textContent = 'IMPACT';
+                                    timeEl.style.textShadow = '0 0 40px rgba(192,57,43,0.7), 0 0 80px rgba(192,57,43,0.4)';
+                                    gsap.to(timeEl, { scale: 1, duration: 0.3, ease: 'elastic.out(1, 0.5)' });
+                                }});
+                            }
+                        }
+                        requestAnimationFrame(tick);
+                    }
+                });
+            }
+
         } else if (sceneNum === '2') {
             // Scene 2: Documents dropped on table
             gsap.set(inner, { opacity: 0, y: 20 });
@@ -3091,6 +3170,27 @@ function initScrollAnims() {
                 onEnter: function() { animCounter(counter, target, isDecimal, suffix); },
                 onLeaveBack: function() { counter.textContent = '0'; }
             });
+        });
+    }
+
+    // 80% punch animation
+    var punch80 = document.getElementById('punch-80');
+    if (punch80) {
+        var punchSpan = punch80.querySelector('span');
+        ScrollTrigger.create({
+            trigger: '#scene-3b',
+            start: 'top 55%',
+            once: true,
+            onEnter: function() {
+                gsap.to(punchSpan, {
+                    opacity: 1, scale: 1, duration: 0.8,
+                    ease: 'back.out(1.5)',
+                    onComplete: function() {
+                        // Pulse effect
+                        gsap.to(punchSpan, { scale: 1.05, duration: 0.5, yoyo: true, repeat: 2, ease: 'power1.inOut' });
+                    }
+                });
+            }
         });
     }
 
