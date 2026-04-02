@@ -3351,7 +3351,17 @@ function initProgressBar() {
         if (!started) return;
 
         function scrollToScene(el) {
-            const y = el.getBoundingClientRect().top + window.scrollY - 40;
+            const elTop = el.getBoundingClientRect().top + window.scrollY;
+            const elH = el.offsetHeight;
+            const winH = window.innerHeight;
+            // If scene fits in viewport, scroll so the whole scene is visible (centered)
+            // If scene is taller, scroll to top with small offset
+            let y;
+            if (elH <= winH - 60) {
+                y = elTop - (winH - elH) / 2;
+            } else {
+                y = elTop - 20;
+            }
             window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
         }
 
