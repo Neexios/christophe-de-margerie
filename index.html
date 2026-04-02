@@ -2711,7 +2711,7 @@ function animate3D() {
         sl.el.style.left = x + 'px';
         sl.el.style.top = y + 'px';
         sl.el.style.display = v.z < 1 ? 'block' : 'none';
-        sl.el.style.opacity = (v.z < 1 && sp < 0.08) ? 0.8 : 0;
+        sl.el.style.opacity = 0;
     });
 
     // Update flight path (airplane position + trail)
