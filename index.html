@@ -226,6 +226,94 @@
             font-weight: 700;
         }
 
+        /* === FILM COUNTDOWN === */
+        #film-countdown {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1950;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #film-countdown .countdown-circle {
+            width: 280px;
+            height: 280px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #film-countdown .countdown-circle::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 100%; height: 100%;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(1.3);
+        }
+
+        /* Crosshair lines */
+        #film-countdown .crosshair-h,
+        #film-countdown .crosshair-v {
+            position: absolute;
+            background: rgba(255,255,255,0.15);
+        }
+        #film-countdown .crosshair-h { width: 100%; height: 1px; top: 50%; left: 0; }
+        #film-countdown .crosshair-v { width: 1px; height: 100%; top: 0; left: 50%; }
+
+        #film-countdown .countdown-num {
+            font-family: 'Source Code Pro', monospace;
+            font-size: 120px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+        }
+
+        /* Sweep hand */
+        #film-countdown .sweep {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 2px;
+            height: 50%;
+            background: linear-gradient(to top, transparent, rgba(255,255,255,0.6));
+            transform-origin: bottom center;
+            transform: rotate(0deg);
+        }
+
+        /* Film grain scratches */
+        #film-countdown .film-scratches {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(255,255,255,0.02) 2px,
+                rgba(255,255,255,0.02) 4px
+            );
+            pointer-events: none;
+        }
+
+        #film-countdown .film-label {
+            position: absolute;
+            bottom: 60px;
+            font-family: var(--typewriter);
+            font-size: 12px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+        }
+
         /* === VIDEO OVERLAY === */
         #video-overlay {
             position: fixed;
@@ -1843,6 +1931,18 @@
     </div>
 </div>
 
+<!-- === FILM COUNTDOWN === -->
+<div id="film-countdown">
+    <div class="film-scratches"></div>
+    <div class="crosshair-h"></div>
+    <div class="crosshair-v"></div>
+    <div class="countdown-circle">
+        <div class="sweep" id="countdown-sweep"></div>
+        <p class="countdown-num" id="countdown-num">5</p>
+    </div>
+    <p class="film-label">Document classifié</p>
+</div>
+
 <!-- === VIDEO OVERLAY === -->
 <div id="video-overlay">
     <div class="cinema-bar top"></div>
@@ -2388,6 +2488,41 @@ function flyNewspapers(callback) {
 // ================================================================
 // INTRO VIDEO PLAYER
 // ================================================================
+function playFilmCountdown(callback) {
+    const countdownEl = document.getElementById('film-countdown');
+    const numEl = document.getElementById('countdown-num');
+    const sweepEl = document.getElementById('countdown-sweep');
+    if (!countdownEl) { if (callback) callback(); return; }
+
+    countdownEl.style.pointerEvents = 'all';
+    gsap.to(countdownEl, { opacity: 1, duration: 0.3 });
+
+    let count = 5;
+    numEl.textContent = count;
+
+    // Sweep hand rotates 360° per second
+    gsap.to(sweepEl, { rotation: 360 * 5, duration: 5, ease: 'linear' });
+
+    const interval = setInterval(() => {
+        count--;
+        if (count > 0) {
+            // Flash effect on number change
+            gsap.fromTo(numEl, { scale: 1.4, opacity: 0.5 }, { scale: 1, opacity: 1, duration: 0.3, ease: 'power2.out' });
+            numEl.textContent = count;
+        } else {
+            clearInterval(interval);
+            // Fade out countdown
+            gsap.to(countdownEl, {
+                opacity: 0, duration: 0.4,
+                onComplete: () => {
+                    countdownEl.remove();
+                    if (callback) callback();
+                }
+            });
+        }
+    }, 1000);
+}
+
 function playIntroVideo(callback) {
     const overlay = document.getElementById('video-overlay');
     const video = document.getElementById('intro-video');
@@ -2398,41 +2533,44 @@ function playIntroVideo(callback) {
 
     if (!overlay || !video) { if (callback) callback(); return; }
 
-    let finished = false;
-    function finish() {
-        if (finished) return;
-        finished = true;
-        video.pause();
-        gsap.to(overlay, {
-            opacity: 0, duration: 0.6, ease: 'power2.in',
-            onComplete: () => {
-                overlay.remove();
-                if (callback) callback();
-            }
+    // Film countdown FIRST, then video
+    playFilmCountdown(() => {
+        let finished = false;
+        function finish() {
+            if (finished) return;
+            finished = true;
+            video.pause();
+            gsap.to(overlay, {
+                opacity: 0, duration: 0.6, ease: 'power2.in',
+                onComplete: () => {
+                    overlay.remove();
+                    if (callback) callback();
+                }
+            });
+        }
+
+        // Cinema bars close in
+        overlay.style.pointerEvents = 'all';
+        gsap.to(overlay, { opacity: 1, duration: 0.3 });
+        gsap.to(barTop, { height: '8%', duration: 0.6, ease: 'power2.out' });
+        gsap.to(barBottom, { height: '8%', duration: 0.6, ease: 'power2.out' });
+
+        // Label and skip button fade in
+        gsap.to(label, { opacity: 1, duration: 0.5, delay: 0.5 });
+        gsap.to(skipBtn, { opacity: 1, duration: 0.5, delay: 1 });
+
+        // Start video after bars are in place
+        gsap.delayedCall(0.8, () => {
+            video.play().catch(() => {});
         });
-    }
 
-    // Cinema bars close in
-    overlay.style.pointerEvents = 'all';
-    gsap.to(overlay, { opacity: 1, duration: 0.3 });
-    gsap.to(barTop, { height: '8%', duration: 0.6, ease: 'power2.out' });
-    gsap.to(barBottom, { height: '8%', duration: 0.6, ease: 'power2.out' });
+        // Skip button
+        skipBtn.addEventListener('click', finish);
 
-    // Label and skip button fade in
-    gsap.to(label, { opacity: 1, duration: 0.5, delay: 0.5 });
-    gsap.to(skipBtn, { opacity: 1, duration: 0.5, delay: 1 });
-
-    // Start video after bars are in place
-    gsap.delayedCall(0.8, () => {
-        video.play().catch(() => {});
-    });
-
-    // Skip button
-    skipBtn.addEventListener('click', finish);
-
-    // When video ends naturally
-    video.addEventListener('ended', () => {
-        gsap.delayedCall(0.5, finish);
+        // When video ends naturally
+        video.addEventListener('ended', () => {
+            gsap.delayedCall(0.5, finish);
+        });
     });
 }
 
