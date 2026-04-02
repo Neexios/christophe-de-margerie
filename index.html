@@ -2178,7 +2178,16 @@
                 <div class="evo-label">TotalEnergies — 2021+</div>
             </div>
         </div>
-        <div class="evo-grid" style="margin-top:30px;">
+    </div>
+</section>
+
+<!-- ==================== SCENE 7b ==================== -->
+<section class="scene" id="scene-7b">
+    <div class="scene-inner" style="opacity:0;transform:translateY(50px);visibility:hidden;">
+        <div class="evidence-tag">Pièce C-2b &mdash; L'après de Margerie</div>
+        <h2 class="scene-title">Total après <span style="color:var(--red)">2014</span></h2>
+        <div class="scene-subtitle">De la continuité au retrait forcé</div>
+        <div class="evo-grid">
             <div class="evo-card">
                 <div class="evo-year" style="color:var(--red)">2014</div>
                 <h4>Pouyanné succède à CDM</h4>
@@ -3066,6 +3075,43 @@ function initScrollAnims() {
             var suffix = counter.dataset.suffix || '';
             ScrollTrigger.create({
                 trigger: scene3b,
+                start: 'top 60%',
+                onEnter: function() { animCounter(counter, target, isDecimal, suffix); },
+                onLeaveBack: function() { counter.textContent = '0'; }
+            });
+        });
+    }
+
+    // Scene 7b animation
+    var scene7b = document.getElementById('scene-7b');
+    if (scene7b) {
+        var inner7b = scene7b.querySelector('.scene-inner');
+        gsap.to(inner7b, {
+            opacity: 1, y: 0, visibility: 'visible', duration: 1, ease: 'power3.out',
+            scrollTrigger: { trigger: scene7b, start: 'top 72%', end: 'top 30%', toggleActions: 'play none none reverse' }
+        });
+        scene7b.querySelectorAll('.evo-card').forEach(function(card, j) {
+            gsap.fromTo(card,
+                { opacity: 0, y: 30 },
+                { opacity: 1, y: 0, duration: 0.5, delay: j * 0.1, ease: 'power2.out',
+                  scrollTrigger: { trigger: scene7b, start: 'top 50%', toggleActions: 'play none none reverse' }
+                }
+            );
+        });
+        scene7b.querySelectorAll('.data-card').forEach(function(card, j) {
+            gsap.fromTo(card,
+                { opacity: 0, y: 25, scale: 0.97 },
+                { opacity: 1, y: 0, scale: 1, duration: 0.5, delay: j * 0.08, ease: 'power2.out',
+                  scrollTrigger: { trigger: scene7b, start: 'top 50%', toggleActions: 'play none none reverse' }
+                }
+            );
+        });
+        scene7b.querySelectorAll('.data-value[data-target]').forEach(function(counter) {
+            var target = parseFloat(counter.dataset.target);
+            var isDecimal = counter.dataset.decimal === 'true';
+            var suffix = counter.dataset.suffix || '';
+            ScrollTrigger.create({
+                trigger: scene7b,
                 start: 'top 60%',
                 onEnter: function() { animCounter(counter, target, isDecimal, suffix); },
                 onLeaveBack: function() { counter.textContent = '0'; }
