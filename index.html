@@ -416,7 +416,7 @@
         .scene {
             position: relative;
             z-index: 2;
-            padding: 80px 60px 60px;
+            padding: 80px 60px 80px;
         }
 
         #scene-end {
@@ -424,6 +424,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding-bottom: 100px;
         }
 
         .scene-inner {
@@ -898,11 +899,13 @@
             position: fixed;
             bottom: 72px; left: 50%;
             transform: translateX(-50%);
-            z-index: 999;
+            z-index: 5;
             display: none;
             flex-direction: column;
             align-items: center;
             gap: 6px;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
         }
 
         #scroll-cta span {
@@ -1047,10 +1050,7 @@
             100% { transform: translateX(-200%); }
         }
 
-        /* Scene 6 - Page Turn */
-        .scene[data-scene="6"] {
-            perspective: 1200px;
-        }
+        /* Scene 6 - Page Turn (perspective applied via JS during animation only) */
 
         /* === LOADING SCREEN === */
         #loading-screen {
@@ -1162,16 +1162,25 @@
         @media (min-width: 2560px) {
             .scene-inner { max-width: 1600px; }
             .scene { padding: 140px 80px 160px; }
-            .typewriter-text { font-size: 20px; max-width: 950px; }
+            .typewriter-text { font-size: 26px; max-width: 1100px; }
+            .scene-subtitle { font-size: clamp(20px, 2vw, 30px); }
+            .evidence-tag { font-size: 18px; }
+            .data-label { font-size: 17px; }
+            .dossier-item p { font-size: 19px; }
+            .dossier-item h4 { font-size: 20px; }
         }
 
         /* --- Grands écrans (1920p+) --- */
         @media (min-width: 1920px) {
             .scene-inner { max-width: 1400px; }
             .scene-title { font-size: clamp(48px, 5vw, 80px); }
-            .typewriter-text { font-size: 18px; max-width: 850px; }
+            .typewriter-text { font-size: 24px; max-width: 1000px; }
             .data-grid { gap: 28px; }
             .data-value { font-size: clamp(36px, 4vw, 52px); }
+            .scene-subtitle { font-size: clamp(18px, 2vw, 28px); }
+            .evidence-tag { font-size: 17px; }
+            .data-label { font-size: 16px; }
+            .dossier-item p { font-size: 18px; }
         }
 
         /* --- Petits laptops (1366px de large) --- */
@@ -1179,13 +1188,17 @@
             .red-string-svg { opacity: 0.4; }
             .scene { padding: 80px 40px 100px; }
             .scene-title { font-size: clamp(28px, 4vw, 56px); }
-            .typewriter-text { font-size: 15px; line-height: 1.8; }
+            .typewriter-text { font-size: 19px; line-height: 1.8; }
+            .scene-subtitle { font-size: clamp(15px, 1.6vw, 22px); }
+            .evidence-tag { font-size: 14px; }
             .data-grid { gap: 16px; }
             .data-value { font-size: clamp(24px, 3vw, 38px); }
+            .data-label { font-size: 14px; }
             .archive-photo { max-width: 400px; }
             .vnoukovo-map { max-width: 480px; }
             .dossier-row { gap: 16px; }
             .dossier-item { min-width: 200px; padding: 16px; }
+            .dossier-item p { font-size: 15px; }
             .pin-board { gap: 16px; }
             .pin-card { padding: 20px; }
             .evo-grid { gap: 16px; }
@@ -1195,6 +1208,7 @@
         /* --- Tablettes (max-width: 1024px) --- */
         @media (max-width: 1024px) {
             .scene { padding: 80px 30px 100px; }
+            .typewriter-text { font-size: 18px; }
             .data-grid { grid-template-columns: repeat(2, 1fr); }
             .pin-board { grid-template-columns: repeat(2, 1fr); }
             .evo-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1207,28 +1221,28 @@
             .red-string-svg { opacity: 0.3; }
             .scene { padding: 80px 40px 80px; }
             .scene-title { font-size: clamp(24px, 3.5vw, 48px); }
-            .scene-subtitle { font-size: clamp(12px, 1.3vw, 16px); margin-bottom: 24px; }
-            .typewriter-text { font-size: 13px; line-height: 1.6; margin-bottom: 20px; }
+            .scene-subtitle { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 24px; }
+            .typewriter-text { font-size: 17px; line-height: 1.65; margin-bottom: 20px; }
             .data-grid { gap: 12px; margin-top: 20px; }
             .data-card { padding: 16px; }
             .data-value { font-size: clamp(22px, 3vw, 32px); }
-            .evidence-tag { font-size: 10px; padding: 4px 12px; margin-bottom: 10px; }
+            .evidence-tag { font-size: 12px; padding: 4px 12px; margin-bottom: 10px; }
             .v-timeline { margin-top: 20px; }
             .v-tl-item { padding-bottom: 20px; }
             .archive-photo { max-width: 350px; max-height: 200px; object-fit: cover; }
             .vnoukovo-map { max-width: 400px; padding: 14px; }
             .pin-board { gap: 12px; }
             .pin-card { padding: 16px; }
-            .pin-card p { font-size: 12px; }
+            .pin-card p { font-size: 14px; }
             .dossier-row { gap: 10px; }
             .dossier-item { padding: 12px; min-width: 180px; }
-            .dossier-item p { font-size: 12px; }
+            .dossier-item p { font-size: 14px; }
             .logo-3d { max-width: 200px; }
             .logo-evolution { gap: 16px; margin-top: 16px; }
             .logo-evo-item img { max-width: 140px; padding: 10px; }
             .evo-grid { gap: 12px; }
             .evo-card { padding: 20px; }
-            .evo-card p { font-size: 12px; }
+            .evo-card p { font-size: 14px; }
             .intro-photo { width: 140px; height: 140px; }
         }
 
@@ -1236,11 +1250,15 @@
         @media (max-width: 768px) {
             .scene { padding: 60px 20px 100px; }
             .scene-title { font-size: clamp(24px, 6vw, 36px); }
-            .typewriter-text { font-size: 14px; line-height: 1.7; padding-left: 14px; border-left-width: 2px; }
+            .typewriter-text { font-size: 16px; line-height: 1.7; padding-left: 14px; border-left-width: 2px; }
+            .scene-subtitle { font-size: clamp(13px, 3vw, 18px); }
+            .evidence-tag { font-size: 12px; letter-spacing: 2px; }
             .data-grid { grid-template-columns: 1fr 1fr; }
+            .data-label { font-size: 13px; }
             .pin-board { grid-template-columns: 1fr; }
             .evo-grid { grid-template-columns: 1fr; }
             .dossier-row { flex-direction: column; }
+            .dossier-item p { font-size: 15px; }
             .newspaper-page { width: 260px; }
             .archive-photo { max-width: 100%; max-height: 180px; }
             .vnoukovo-map { max-width: 100%; padding: 12px; }
@@ -2937,12 +2955,19 @@ function initScrollAnims() {
             });
 
         } else if (sceneNum === '6') {
-            // Scene 6: Page turn
+            // Scene 6: Page turn — perspective applied via JS only during animation
+            // to prevent permanent perspective from inflating scrollHeight (bug: offsetHeight << scrollHeight)
             gsap.set(inner, { opacity: 0, rotateY: -90, transformOrigin: 'left center', y: 0 });
-            gsap.to(inner, {
-                opacity: 1, rotateY: 0, duration: 1.2, ease: 'power3.out',
+            const tl6 = gsap.timeline({
                 scrollTrigger: { trigger: scene, start: START, toggleActions: TOGGLE,
-                    onEnter: onReveal, onLeaveBack: onHide }
+                    onEnter: function() { scene.style.perspective = '1200px'; onReveal(); },
+                    onLeaveBack: function() { scene.style.perspective = '1200px'; onHide(); }
+                },
+                onComplete: function() { scene.style.perspective = ''; },
+                onReverseComplete: function() { scene.style.perspective = ''; }
+            });
+            tl6.to(inner, {
+                opacity: 1, rotateY: 0, duration: 1.2, ease: 'power3.out'
             });
 
         } else {
@@ -3379,7 +3404,7 @@ function initProgressBar() {
 // KEYBOARD NAVIGATION
 // ================================================================
 (function keyboardNav() {
-    const sceneIds = ['scene-1','scene-2','scene-3','scene-3b','scene-4','scene-5','scene-6','scene-7','scene-7b'];
+    const sceneIds = ['scene-1','scene-2','scene-3','scene-3b','scene-4','scene-5','scene-6','scene-7','scene-7b','scene-end'];
 
     function getCurrentSceneIndex() {
         const mid = window.innerHeight / 2;
@@ -3400,8 +3425,6 @@ function initProgressBar() {
             const elTop = el.getBoundingClientRect().top + window.scrollY;
             const elH = el.offsetHeight;
             const winH = window.innerHeight;
-            // If scene fits in viewport, scroll so the whole scene is visible (centered)
-            // If scene is taller, scroll to top with small offset
             let y;
             if (elH <= winH - 60) {
                 y = elTop - (winH - elH) / 2;
@@ -3411,10 +3434,9 @@ function initProgressBar() {
             window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
         }
 
-        // Number keys 1-7
+        // Number keys 1-7 → go to scene-N directly
         if (e.key >= '1' && e.key <= '7') {
-            const idx = parseInt(e.key) - 1;
-            const el = document.getElementById(sceneIds[idx]);
+            const el = document.getElementById('scene-' + e.key);
             if (el) {
                 e.preventDefault();
                 scrollToScene(el);
@@ -3435,9 +3457,6 @@ function initProgressBar() {
                 scrollToScene(document.getElementById(sceneIds[next]));
             } else if (next < 0) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else if (next >= sceneIds.length) {
-                const endEl = document.getElementById('scene-end');
-                if (endEl) scrollToScene(endEl);
             }
         }
     });
@@ -3966,7 +3985,7 @@ function initProgressBar() {
     var PRES_DURATION = 12000;
     var presRAF = null;
 
-    var sceneIds = ['scene-1','scene-2','scene-3','scene-3b','scene-4','scene-5','scene-6','scene-7','scene-7b'];
+    var sceneIds = ['scene-1','scene-2','scene-3','scene-3b','scene-4','scene-5','scene-6','scene-7','scene-7b','scene-end'];
 
     function getPresCurrentIndex() {
         var mid = window.innerHeight / 2;
@@ -3982,7 +4001,7 @@ function initProgressBar() {
 
     function updatePresLabel() {
         var idx = getPresCurrentIndex();
-        presScene.textContent = 'Scene ' + (idx + 1) + '/' + SCENES.length;
+        presScene.textContent = 'Scene ' + (idx + 1) + '/' + sceneIds.length;
     }
 
     function presAdvance() {
@@ -3990,9 +4009,6 @@ function initProgressBar() {
         var next = idx + 1;
         if (next < sceneIds.length) {
             document.getElementById(sceneIds[next]).scrollIntoView({ behavior: 'smooth' });
-        } else {
-            var endEl = document.getElementById('scene-end');
-            if (endEl) endEl.scrollIntoView({ behavior: 'smooth' });
         }
         resetPresTimer();
     }
