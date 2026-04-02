@@ -3067,7 +3067,7 @@ function initScrollAnims() {
     // Breaking News TV transition before scene 3 (the accident)
     ScrollTrigger.create({
         trigger: '#scene-3',
-        start: 'top 80%',
+        start: 'top 65%',
         once: true,
         onEnter: () => {
             const overlay = document.getElementById('tv-static-overlay');
@@ -3137,7 +3137,7 @@ function initScrollAnims() {
             ease: 'none',
             scrollTrigger: {
                 trigger: '#scene-4',
-                start: 'top 80%',
+                start: 'top 65%',
                 end: 'bottom 30%',
                 scrub: 1,
                 onUpdate: function(self) {
@@ -3312,13 +3312,18 @@ function initProgressBar() {
     document.addEventListener('keydown', function(e) {
         if (!started) return;
 
+        function scrollToScene(el) {
+            const y = el.getBoundingClientRect().top + window.scrollY - 40;
+            window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+        }
+
         // Number keys 1-7
         if (e.key >= '1' && e.key <= '7') {
             const idx = parseInt(e.key) - 1;
             const el = document.getElementById(sceneIds[idx]);
             if (el) {
                 e.preventDefault();
-                el.scrollIntoView({ behavior: 'smooth' });
+                scrollToScene(el);
             }
             return;
         }
@@ -3333,12 +3338,12 @@ function initProgressBar() {
             const current = getCurrentSceneIndex();
             const next = current + direction;
             if (next >= 0 && next < sceneIds.length) {
-                document.getElementById(sceneIds[next]).scrollIntoView({ behavior: 'smooth' });
+                scrollToScene(document.getElementById(sceneIds[next]));
             } else if (next < 0) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else if (next >= sceneIds.length) {
                 const endEl = document.getElementById('scene-end');
-                if (endEl) endEl.scrollIntoView({ behavior: 'smooth' });
+                if (endEl) scrollToScene(endEl);
             }
         }
     });
@@ -3582,7 +3587,7 @@ function initProgressBar() {
         // Breaking news static (scene 4 approach)
         ScrollTrigger.create({
             trigger: '#scene-4',
-            start: 'top 80%',
+            start: 'top 65%',
             end: 'top 55%',
             onEnter: function() { if (soundEnabled) startStatic(); },
             onLeave: function() { stopStatic(); },
@@ -3614,7 +3619,7 @@ function initProgressBar() {
         if (!started) { setTimeout(setup, 300); return; }
         ScrollTrigger.create({
             trigger: '#scene-3',
-            start: 'top 85%',
+            start: 'top 70%',
             once: true,
             onEnter: function() {
                 var tl = gsap.timeline();
@@ -3640,7 +3645,7 @@ function initProgressBar() {
         if (!started) { setTimeout(setup, 300); return; }
         ScrollTrigger.create({
             trigger: '#scene-4',
-            start: 'top 85%',
+            start: 'top 70%',
             once: true,
             onEnter: function() {
                 var tl = gsap.timeline();
@@ -3696,7 +3701,7 @@ function initProgressBar() {
         if (!started) { setTimeout(setup, 300); return; }
         ScrollTrigger.create({
             trigger: '#scene-5',
-            start: 'top 85%',
+            start: 'top 70%',
             once: true,
             onEnter: function() {
                 var tl = gsap.timeline();
